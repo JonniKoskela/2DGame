@@ -1,3 +1,8 @@
+#include <iostream>
+#include <string>
+#include <math.h>
+#include <vector>
+#include <cmath>
 
 //----utility functions----
 #include "utils.h"
@@ -7,20 +12,14 @@
 #include "GLrenderer.hpp"
 #include "input.hpp"
 //----cpp----
-#include <iostream>
-#include <string>
-#include <math.h>
-#include <vector>
-#include <cmath>
 
 
 static float deltaTime = 0.0f;
-
+constexpr float winWidth = 960.0f;
+constexpr float winHeight = 540.0f;
 
 //----------------
 
-
-Vec2 mPos{};
 GLFWwindow* window;
 static BumpAllocator bump{};
 
@@ -31,25 +30,32 @@ int main(void)
     if (!glfwInit())
         return -1;
 
-    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
-    window = glfwCreateWindow(winWidth, winHeight, "Hello World", NULL, NULL);
-    if (!window)
-    {
-        glfwTerminate();
-        return -1;
-    }
+	{
+		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
+		window = glfwCreateWindow(winWidth, winHeight, "Hello World", NULL, NULL);
+		if (!window)
+		{
+			glfwTerminate();
+			return -1;
+		}
 
-    glfwMakeContextCurrent(window);
-   //glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-    glfwSetKeyCallback(window, input::keyCallback);
-    glfwSetCursorPosCallback(window, input::cursor_position_callback);
+		glfwMakeContextCurrent(window);
+		//glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+		glfwSetKeyCallback(window, keyCallback);
+		glfwSetCursorPosCallback(window, cursor_position_callback);
 
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-    {
-        std::cout << "Failed to initialize GLAD" << std::endl;
-        return -1;
-    }
-    printf("%s\n", glGetString(GL_VERSION));
+		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+		{
+			std::cout << "Failed to initialize GLAD" << std::endl;
+			return -1;
+		}
+		printf("%s\n", glGetString(GL_VERSION));
+	}
+
+
+	initializeInputs();
+	setupGame();
+
 
     glInit(&bump);
 
@@ -61,7 +67,6 @@ int main(void)
         glfwPollEvents();
     }
 
-    glDeleteProgram(shaderProgram);
     glfwDestroyWindow(window);
     glfwTerminate();
     return 0;

@@ -228,6 +228,12 @@
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\attacks.hpp" />
+    <ClInclude Include="src\game.h" />
+    <ClInclude Include="src\GLrenderer.h" />
+    <ClInclude Include="src\camera.h" />
+    <ClInclude Include="src\mobs.h" />
+    <ClInclude Include="src\input.h" />
     <ClInclude Include="src\input.hpp" />
     <ClInclude Include="src\fileUtils.h" />
     <ClInclude Include="src\assets.h" />
@@ -241,6 +247,8 @@
     <Image Include="assets\textureAtlas.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="assets\arc.frag" />
+    <None Include="assets\arc.vert" />
     <None Include="assets\quad.frag" />
     <None Include="assets\quad.vert" />
   </ItemGroup>

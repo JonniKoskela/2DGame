@@ -219,22 +219,3 @@ float sign(float x)
 }
 
 
-float lerp(float a, float b, float t)
-{
-	return a + (b - a) * t;
-}
-
-float approach(float current, float target, float increase)
-{
-	if (current < target)
-	{
-		return std::min(current + increase, target);
-
-	}
-	return std::max(current - increase, target);
-}
-
-Vec2 vec_2(iVec2 vec)
-{
-	return Vec2{ (float)vec.x, (float)vec.y };
-}

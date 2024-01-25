@@ -11,7 +11,7 @@ struct Transform {
 	iVec2 spriteSize{ 0 };
 };
 
-struct orthographicCamera {
+struct OrtographicCamera {
 	Vec2 position{ 0 };
 	Vec2 dimensions{ 0 };
 	float zoom = 1.0f;
@@ -22,8 +22,10 @@ struct orthographicCamera {
 struct RenderData
 {
 	std::vector<Transform> transforms{};
+	OrtographicCamera gameCamera{};
 	
-	RenderData() {
+	RenderData()
+	{
 		transforms.reserve(1000);
 	}
 };
@@ -63,3 +65,20 @@ void drawSprite(SpriteID spriteID, iVec2 pos)
 {
 	drawSprite(spriteID, vec_2(pos));
 }
+
+
+
+ //void drawAttack(AttackID attackID, Vec2 pos)
+ //{
+ //	Attack attack = getAttack(attackID);
+ //
+ //	Transform transform = {};
+ //	transform.pos = pos - vec_2(attack.size) / 2.0f;
+ //	transform.size = vec_2(attack.size) / 2.0f;
+ //	transform.atlasOffset = attack.atlasOffset;
+ //	transform.spriteSize = attack.size;
+ //
+ //	renderData->transforms.push_back(transform);
+ //}
+
+

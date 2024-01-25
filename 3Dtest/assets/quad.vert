@@ -40,15 +40,15 @@ void main()
   float right = transform.atlasOffset.x + transform.spriteSize.x;
   float bottom = transform.atlasOffset.y + transform.spriteSize.y;
 
-  vec2 textureCoords[6] = 
-  {
-    vec2(left, top),
-    vec2(left, bottom),
-    vec2(right, top),
-    vec2(right, top),
-    vec2(left, bottom),
-    vec2(right, bottom),
-  };
+vec2 textureCoords[6] = 
+{
+  vec2(left, bottom),
+  vec2(left, top),
+  vec2(right, bottom),
+  vec2(right, bottom),
+  vec2(left, top),
+  vec2(right, top),
+};
    {
     vec2 vertexPos = vertices[gl_VertexID];
     gl_Position =  orthoProjection* vec4(vertexPos,0.0,1.0); 
