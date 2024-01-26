@@ -23,7 +23,8 @@ const char* TEXTURE_PATH = "assets/textureAtlas.png";
 bool compileShaders(BumpAllocator* bump);
 bool compileArcShaders(BumpAllocator* bump);
 void renderArc();
-
+void renderSlam();
+void renderAttack(int attackType);
 
 
 
@@ -157,11 +158,11 @@ void openGLRender()
 			renderData->transforms.clear();
 		}
 	}
-	if(drawArc)
+	if(attacking)
 	{
 		glUseProgram(arcShader);
         glUniformMatrix4fv(arcShaderProjection, 1, GL_FALSE, &orthoProjection.data[0][0]);
-		renderArc();
+		renderAttack(performingAttackType);
 	}
 
 	error = glGetError();
@@ -185,10 +186,33 @@ void renderArc() {
 	glDrawArrays(GL_TRIANGLE_FAN, 0, arcVertexCapacity);
 }
 
+void renderSlam()
+{
+	arcTimer += getCurrentTime();
+	//std::cout << arcTimer << "\n";
+	glUniform1f(currentTimeLocation, arcTimer);
+
+	glBindBuffer(GL_ARRAY_BUFFER, slamVBO);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(ArcVertex), (void*)0);
+
+	glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+}
 
 
+void renderAttack(int attackType)
+{
+	switch (attackType)
+	{
+	case ARC_ATTACK:
+		renderArc();
+		break;
 
-
+	case SLAM_ATTACK:
+		renderSlam();
+		break;
+	}
+}
 
 
 

@@ -61,8 +61,8 @@ int main(void)
 
     while (!glfwWindowShouldClose(window))
     {
-        openGLRender();
         mainGameLoop();
+        openGLRender();
         glfwSwapBuffers(window);
         glfwPollEvents();
     }

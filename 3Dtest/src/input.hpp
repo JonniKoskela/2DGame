@@ -56,8 +56,10 @@ bool pollAction(GameInputType inputType, KeyState state)
 
 void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
 {
-	mPos.x = (xpos - (winWidth / 2)) / (winWidth / renderData->gameCamera.dimensions.x);
-	mPos.y = -(ypos  - winHeight / 2) / (winHeight / renderData->gameCamera.dimensions.y);
+	OrtographicCamera camera = renderData->gameCamera;
+
+	mPos.x = (xpos - (winWidth / 2)) / (winWidth / renderData->gameCamera.dimensions.x) + camera.position.x;
+	mPos.y = -(ypos  - winHeight / 2) / (winHeight / renderData->gameCamera.dimensions.y) + camera.position.y;
 }
 
 void initializeInputs() {
@@ -66,4 +68,5 @@ void initializeInputs() {
 	gameState.keyMappings[MOVE_RIGHT].keys.push_back(Key(GLFW_KEY_D));
 	gameState.keyMappings[MOVE_LEFT].keys.push_back(Key(GLFW_KEY_A));
 	gameState.keyMappings[ATTACK_1].keys.push_back(Key(GLFW_KEY_1));
+	gameState.keyMappings[ATTACK_2].keys.push_back(Key(GLFW_KEY_2));
 }

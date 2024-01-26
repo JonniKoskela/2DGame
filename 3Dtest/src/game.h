@@ -14,4 +14,5 @@ public:
 	bool attacking { false };
 	bool moving { false };
 };
+static Player player{};
 static GameState gameState{};
