@@ -65,7 +65,7 @@
     <ClInclude Include="src\mobs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\attackInterface.h">
+    <ClInclude Include="src\actionInterface.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

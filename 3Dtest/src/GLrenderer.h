@@ -21,6 +21,15 @@ GLuint currentTimeLocation{};
 GLuint attackFlagLocation{};
 
 
+
+
+bool compileShaders(BumpAllocator* bump);
+bool compileArcShaders(BumpAllocator* bump);
+void renderArc();
+void renderSlam();
+void renderAttack(int attackType);
+
+
 void genArcBuffer(std::vector<ArcVertex> arcVertices)
 {
 	glGenBuffers(1, &arcVBO);

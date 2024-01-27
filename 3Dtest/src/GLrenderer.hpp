@@ -5,26 +5,18 @@
 #include <matrix.hpp>
 #include <chrono>
 #include <gtc/matrix_transform.hpp>
-
 #include "GLrenderer.h"
 #include <math.h>
 #include "input.h"
 #include "camera.h"
 #include "attacks.hpp"
+#include "game.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
 static Vec2 screenSize{ 960.0f, 540.0f };
 const char* TEXTURE_PATH = "assets/textureAtlas.png";
 
 
-
-
-
-bool compileShaders(BumpAllocator* bump);
-bool compileArcShaders(BumpAllocator* bump);
-void renderArc();
-void renderSlam();
-void renderAttack(int attackType);
 
 
 
@@ -163,7 +155,11 @@ void openGLRender()
 	{
 		glUseProgram(arcShader);
         glUniformMatrix4fv(arcShaderProjection, 1, GL_FALSE, &orthoProjection.data[0][0]);
-		renderAttack(performingAttackType);
+		for(const ActionBarSlot& action : actionBar.actions){
+			if(action.active){
+				renderAttack(action.attackID);
+			}
+		}
 	}
 
 	error = glGetError();

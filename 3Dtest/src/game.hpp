@@ -10,22 +10,6 @@
 #include "attacks.hpp"
 #include <math.h>
 
-using Duration = std::chrono::duration<float>;
-using Clock = std::chrono::steady_clock;
-
-auto previousTime = Clock::now();
-auto currentTime = Clock::now();
-constexpr float DELTA = (float)1 / 60;
-extern float deltaTime;
-Mob gobo;
-ActionBar actionBar{};
-
-void getDT();
-void setupGame();
-Vec2 toWorldCoordinates(Vec2 position);
-
-void startArcAttack();
-bool arcHitDetection(float AttackAngle);
 
 
 void simulate() 
@@ -82,12 +66,16 @@ void simulate()
 
 		if (pollAction(ATTACK_1,KEY_DOWN) == true && attacking != true)
 		{
-			actionBar.startAttack( actionBar.actions[0] );
+			actionBar.startAction( actionBar.actions[0] );
 		}
 		else if (pollAction(ATTACK_2, KEY_DOWN) == true && attacking != true)
 		{
-			actionBar.startAttack( actionBar.actions[1] );
+			actionBar.startAction( actionBar.actions[1] );
 		}
+	}
+	if (attacking)
+	{
+
 	}
 
 	//calculate new position if changed
@@ -115,6 +103,7 @@ void mainGameLoop()
 }
 
 
+
 void setupGame() 
 {
 	player.pos = { 50.0f, 50.0f };
@@ -123,8 +112,7 @@ void setupGame()
 	gobo = createMob(MOB_GOBLIN);
 	gobo.position = { 100.0f,100.0f };
 	actionBar.actions.reserve(5);
-	actionBar.actions[0] = ARC_ATTACK;
-	actionBar.actions[1] = SLAM_ATTACK;
+	actionBar.actions[0].bindActionSlot(ACTION_ATTACK, ARC_ATTACK);
 }
 
 void getDT() 
