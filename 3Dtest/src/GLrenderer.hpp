@@ -106,7 +106,8 @@ bool glInit(BumpAllocator* bump)
 		arcShaderProjection = glGetUniformLocation(arcShader, "orthoProjection");
 		currentTimeLocation = glGetUniformLocation(arcShader, "currentTime");
 		fadeDurationLocation = glGetUniformLocation(arcShader, "fadeDuration");
-		glUniform1f(fadeDurationLocation, arcFadeTime);
+		attackFlagLocation = glGetUniformLocation(arcShader, "attackFlag");
+		glUniform1f(fadeDurationLocation, attackFadeTime);
 
 
 		error = glGetError();
@@ -196,7 +197,7 @@ void renderSlam()
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(ArcVertex), (void*)0);
 
-	glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+	glDrawArrays(GL_QUADS, 0, 4);
 }
 
 
@@ -205,10 +206,19 @@ void renderAttack(int attackType)
 	switch (attackType)
 	{
 	case ARC_ATTACK:
+		glUniform1i(attackFlagLocation, 0);
 		renderArc();
 		break;
 
 	case SLAM_ATTACK:
+		static bool attackStarted;
+		static float angle;
+			attackStarted = true;
+			glUniform1i(attackFlagLocation, 1);
+			Vec2 normalizedmPos = normalizeTo(player.pos, mPos);
+			angle = atan2f(normalizedmPos.x, normalizedmPos.y);
+		std::vector<SlamVertex> slamVertices = generateSlamVertices(player.pos, angle, 70.0f);
+		genSlamBuffer(slamVertices);
 		renderSlam();
 		break;
 	}

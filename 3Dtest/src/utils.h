@@ -196,9 +196,9 @@ Vec2 normalize(const Vec2& vec)
 	return result;
 }
 
-Vec2 normalizeTo(Vec2 playerPos, Vec2 mousePos)
+Vec2 normalizeTo(Vec2& playerPos, Vec2& mousePos)
 {
-	Vec2 result = mousePos - playerPos;
+	Vec2 result = playerPos - mousePos;
 	return normalize(result);
 }
 

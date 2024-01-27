@@ -65,6 +65,9 @@
     <ClInclude Include="src\mobs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\attackInterface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="assets\textureAtlas.png">

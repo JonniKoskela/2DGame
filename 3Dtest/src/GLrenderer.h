@@ -18,6 +18,7 @@ GLuint arcShader{};
 GLuint arcShaderProjection{};
 GLuint fadeDurationLocation{};
 GLuint currentTimeLocation{};
+GLuint attackFlagLocation{};
 
 
 void genArcBuffer(std::vector<ArcVertex> arcVertices)

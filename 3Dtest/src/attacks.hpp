@@ -11,7 +11,7 @@ auto currentArcTime = Clock::now();
 
 int arcVertexCapacity{ 25 };
 float arcTimer{ 0.0f };
-float arcFadeTime = 500.0f;
+float attackFadeTime = 1500.0f;
 bool attacking = false;
 extern Mob gobo;
 
@@ -96,7 +96,7 @@ std::vector<ArcVertex> generateArcVertices(Vec2& pos, float mAngle, float distan
 	vertices.reserve(arcVertexCapacity);
 	//float centerX = normalize();
 	float radius = 50.0f + distance;
-	float startAngle = mAngle + 1.5*fPi ;
+	float startAngle = mAngle + 0.5*fPi ;
 	float centerX = pos.x + cosf(startAngle) * distance;
 	float centerY = pos.y - sinf(startAngle) * distance;
 	//float startAngle = fPi;
@@ -120,22 +120,23 @@ std::vector<ArcVertex> generateArcVertices(Vec2& pos, float mAngle, float distan
 }
 
 
-
 std::vector<SlamVertex> generateSlamVertices(Vec2& pos, float mAngle, float range)
 {
 	std::vector<SlamVertex> vertices{};
 	vertices.reserve(4);
-	float angle = mAngle + 1.5f*fPi;
-	float distance = 15.0f;
-	float endRange = distance + range;
-	vertices.push_back(SlamVertex{ pos.x + distance * cosf(angle - 1), pos.y - distance * sinf(angle - 1)});
-	vertices.push_back(SlamVertex{ pos.x + distance * cosf(angle + 1), pos.y - distance * sinf(angle + 1)});
-	vertices.push_back(SlamVertex{ pos.x + endRange * cosf(angle + 0.25f), pos.y - endRange * sinf(angle + 0.25f) });
-	vertices.push_back(SlamVertex{ pos.x + endRange * cosf(angle - 0.25f), pos.y - endRange * sinf(angle - 0.25f) });
+	float angle = mAngle + 0.5f * fPi;
+	float distance = 30.0f;
+	float width = 50.0f;
+	float endRange = distance + (range * arcTimer / attackFadeTime);
+	float innerAngle = tanf(width * 0.5f / distance);
+	float outerAngle = tanf(width * 0.5f / endRange);
+
+	vertices.push_back(SlamVertex{ pos.x + distance * cosf(angle - innerAngle), pos.y - distance * sinf(angle - innerAngle) });
+	vertices.push_back(SlamVertex{ pos.x + distance * cosf(angle + innerAngle), pos.y - distance * sinf(angle + innerAngle) });
+	vertices.push_back(SlamVertex{ pos.x + endRange * cosf(angle + outerAngle), pos.y - endRange * sinf(angle + outerAngle) });
+	vertices.push_back(SlamVertex{ pos.x + endRange * cosf(angle - outerAngle), pos.y - endRange * sinf(angle - outerAngle) });
 	return vertices;
 }
-
-
 
 
 
@@ -158,7 +159,7 @@ float getCurrentTime()
 	currentArcTime = Clock::now();
 	auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(currentArcTime - previousArcTime);
 	previousArcTime = currentArcTime;
-	if (arcTimer >= arcFadeTime)
+	if (arcTimer >= attackFadeTime)
 	{
 		attacking = false;
 	}

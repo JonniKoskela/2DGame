@@ -228,6 +228,7 @@
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\attackInterface.h" />
     <ClInclude Include="src\attacks.hpp" />
     <ClInclude Include="src\game.h" />
     <ClInclude Include="src\GLrenderer.h" />
