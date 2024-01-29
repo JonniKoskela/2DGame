@@ -9,7 +9,7 @@
 #include <math.h>
 #include "input.h"
 #include "camera.h"
-#include "attacks.hpp"
+#include "action/attacks.hpp"
 #include "game.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
@@ -77,10 +77,9 @@ bool glInit(BumpAllocator* bump)
     {
         std::cout << "GLERROR c: " << error << "\n";
     }
-
+		glGenBuffers(1, &slamVBO);
     orthoID = glGetUniformLocation(shaderProgram, "orthoProjection");
-    Matrix4f orthoProjection = orthographicProjection(
-        0, screenSize.x, 0, -screenSize.y);
+    Matrix4f orthoProjection = orthographicProjection( 0, screenSize.x, 0, -screenSize.y );
     glUniformMatrix4fv(orthoID, 1, GL_FALSE, &orthoProjection.data[0][0]);
 
     error = glGetError();
@@ -110,7 +109,8 @@ bool glInit(BumpAllocator* bump)
 	}
 
 	//generate arc buffer
-
+	glGenBuffers(1, &slamVBO);
+	glGenBuffers(1, &arcVBO);
     glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     return true;
@@ -121,16 +121,17 @@ bool glInit(BumpAllocator* bump)
 
 void openGLRender()
 {
-		GLenum error{};
+		static GLenum error{};
 		OrtographicCamera camera = renderData->gameCamera;
+		GLuint rotationMatrixLocation{};
 
 		Matrix4f orthoProjection = orthographicProjection(
 			camera.position.x - camera.dimensions.x / 2.0f,
 			camera.position.x + camera.dimensions.x / 2.0f,
 			camera.position.y + camera.dimensions.y / 2.0f,
 			camera.position.y - camera.dimensions.y / 2.0f);
-	{
 
+	{
 		glUseProgram(shaderProgram);
 		glViewport(0, 0, screenSize.x, screenSize.y);
 		glClearColor(119.0f / 255.0f, 33.0f / 255.0f, 111.0f / 255.0f, 1.0f);
@@ -151,13 +152,15 @@ void openGLRender()
 			renderData->transforms.clear();
 		}
 	}
-	if(attacking)
+
 	{
 		glUseProgram(arcShader);
-        glUniformMatrix4fv(arcShaderProjection, 1, GL_FALSE, &orthoProjection.data[0][0]);
-		for(const ActionBarSlot& action : actionBar.actions){
-			if(action.active){
-				renderAttack(action.attackID);
+		glUniformMatrix4fv(arcShaderProjection, 1, GL_FALSE, &orthoProjection.data[0][0]);
+		for (const ActionBarSlot& action : actionBar.actions)
+		{
+			if (action.active)
+			{
+				renderAttack(action.boundAction.actionID);
 			}
 		}
 	}
@@ -178,9 +181,10 @@ void renderArc() {
 
 	glBindBuffer(GL_ARRAY_BUFFER, arcVBO);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(ArcVertex), (void*)0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(ArcVertex), 0);
 
 	glDrawArrays(GL_TRIANGLE_FAN, 0, arcVertexCapacity);
+	glDisableVertexAttribArray(0);
 }
 
 void renderSlam()
@@ -188,12 +192,12 @@ void renderSlam()
 	arcTimer += getCurrentTime();
 	//std::cout << arcTimer << "\n";
 	glUniform1f(currentTimeLocation, arcTimer);
-
+	glUniform1i(attackFlagLocation, 1);
 	glBindBuffer(GL_ARRAY_BUFFER, slamVBO);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(ArcVertex), (void*)0);
-
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(SlamVertex), 0);
 	glDrawArrays(GL_QUADS, 0, 4);
+	glDisableVertexAttribArray(0);
 }
 
 
@@ -207,10 +211,9 @@ void renderAttack(int attackType)
 		break;
 
 	case SLAM_ATTACK:
-		static bool attackStarted;
-		static float angle;
+		static bool attackStarted{};
+		static float angle{};
 			attackStarted = true;
-			glUniform1i(attackFlagLocation, 1);
 			Vec2 normalizedmPos = normalizeTo(player.pos, mPos);
 			angle = atan2f(normalizedmPos.x, normalizedmPos.y);
 		std::vector<SlamVertex> slamVertices = generateSlamVertices(player.pos, angle, 70.0f);

@@ -1,13 +1,13 @@
 #pragma once
-#include "game.h"
 #include "assets.h"
 #include "mobs.h"
 #include "renderInterface.h"
 #include "input.hpp"
 #include <chrono>
-#include "GLrenderer.h"
 #include "camera.h"
-#include "attacks.hpp"
+#include "action/action.hpp"
+#include "action/attackActionStructs.h"
+#include "game.h"
 #include <math.h>
 
 
@@ -34,7 +34,7 @@ void simulate()
 	{
 		if (yKeyDown)
 		{
-			std::cout << player.pos.x << " " << player.pos.y << "\n";
+			//std::cout << player.pos.x << " " << player.pos.y << "\n";
 			if (pollAction(MOVE_UP, KEY_DOWN) == true)
 			{
 				player.speed.y = approach(player.speed.y, runSpeed, runAccel * DELTA);
@@ -64,18 +64,37 @@ void simulate()
 			player.speed.x = approach(player.speed.x, 0.0f, runReduce * DELTA);
 		}
 
-		if (pollAction(ATTACK_1,KEY_DOWN) == true && attacking != true)
+		if (pollAction(ATTACK_1,KEY_DOWN) == true && actionBar.actions[0].onCooldown!= true)
 		{
-			actionBar.startAction( actionBar.actions[0] );
+			actionBar.actions[0].startAction();
 		}
-		else if (pollAction(ATTACK_2, KEY_DOWN) == true && attacking != true)
+		else if (pollAction(ATTACK_2, KEY_DOWN) == true && actionBar.actions[1].onCooldown == true)
 		{
-			actionBar.startAction( actionBar.actions[1] );
+			actionBar.actions[1].startAction();
 		}
 	}
 	if (attacking)
 	{
 
+	}
+	//update cooldowns && process Actions
+	{
+		for (ActionBarSlot actionSlot : actionBar.actions)
+		{
+			if (actionSlot.onCooldown)
+			{
+				if (actionSlot.boundAction.actionStaticType == ACTION_DYNAMIC)
+				{
+					processAction(actionSlot.boundAction);
+				}
+				actionSlot.coolDownTimer += deltaTime;
+				if (actionSlot.coolDownTimer >= actionSlot.boundAction.actionCoolDown)
+				{
+					actionSlot.coolDownTimer = 0.0f;
+					actionSlot.onCooldown = false;
+				}
+			}
+		}
 	}
 
 	//calculate new position if changed
@@ -90,7 +109,10 @@ void mainGameLoop()
 	getDT();
 	if (deltaTime >= DELTA)
 	{
+		// update current physical state of mapped keys. done by glfw
 		updateKeyState();
+
+		// calculate speed, movement, cooldowns, start attacks...
 		simulate();
 		deltaTime -= DELTA;
 		//std::cout << mPos.x << " " << mPos.y << " normalized:  " << normalized.x << normalized.y<< "\n";
@@ -110,15 +132,18 @@ void setupGame()
 	renderData->gameCamera.dimensions = { 480.0f,270.0f };
 	renderData->gameCamera.position = { 0.0f, 0.0f };
 	gobo = createMob(MOB_GOBLIN);
-	gobo.position = { 100.0f,100.0f };
+	gobo.position = { 100.0f, 100.0f };
 	actionBar.actions.reserve(5);
-	actionBar.actions[0].bindActionSlot(ACTION_ATTACK, ARC_ATTACK);
+	actionBar.actions[0].bindActionBarSlot(ACTION_ATTACK, ARC_ATTACK);
+	actionBar.actions[0].active = true;
+	actionBar.actions[1].bindActionBarSlot(ACTION_ATTACK, SLAM_ATTACK);
+	actionBar.actions[1].active = true;
 }
 
 void getDT() 
 {
 	currentTime = Clock::now();
-	Duration dt = currentTime - previousTime;
+	Duration dt = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - previousTime);
 
 	previousTime = currentTime;
 	deltaTime += dt.count();

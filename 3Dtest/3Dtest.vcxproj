@@ -152,7 +152,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\include;$(SolutionDir)Dependencies\glm\glm;$(SolutionDir)Dependencies\GLAD\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <LanguageStandard>Default</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
       <DisableSpecificWarnings>4996</DisableSpecificWarnings>
     </ClCompile>
     <Link>
@@ -211,7 +211,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\include;$(SolutionDir)Dependencies\glm\glm;$(SolutionDir)Dependencies\GLAD\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <LanguageStandard>Default</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
       <DisableSpecificWarnings>4996</DisableSpecificWarnings>
     </ClCompile>
     <Link>
@@ -228,11 +228,14 @@
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\actionInterface.h" />
-    <ClInclude Include="src\attacks.hpp" />
+    <ClInclude Include="src\action\action.hpp" />
+    <ClInclude Include="src\action\attackActionStructs.h" />
+    <ClInclude Include="src\action\attacks.hpp" />
+    <ClInclude Include="src\action\action.h" />
     <ClInclude Include="src\game.h" />
     <ClInclude Include="src\GLrenderer.h" />
     <ClInclude Include="src\camera.h" />
+    <ClInclude Include="src\itemInterface.h" />
     <ClInclude Include="src\mobs.h" />
     <ClInclude Include="src\input.h" />
     <ClInclude Include="src\input.hpp" />

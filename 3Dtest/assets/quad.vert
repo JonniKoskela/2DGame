@@ -16,7 +16,7 @@ layout (std430, binding = 0) buffer TransformSBO
 }; 
 uniform mat4 orthoProjection;
 uniform vec2 screenSize;
-
+uniform mat4 rotationMatrix;
 
 layout (location = 0) out vec2 textureCoordsOut;
 
@@ -51,7 +51,7 @@ vec2 textureCoords[6] =
 };
    {
     vec2 vertexPos = vertices[gl_VertexID];
-    gl_Position =  orthoProjection* vec4(vertexPos,0.0,1.0); 
+    gl_Position = orthoProjection * vec4(vertexPos,0.0,1.0); 
    }
 
   textureCoordsOut = textureCoords[gl_VertexID];

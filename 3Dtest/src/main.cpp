@@ -14,19 +14,18 @@
 //----cpp----
 
 
-static float deltaTime = 0.0f;
 constexpr float winWidth = 960.0f;
 constexpr float winHeight = 540.0f;
 
 //----------------
 
 GLFWwindow* window;
-static BumpAllocator bump{};
+BumpAllocator bump{};
 
 
 int main(void)
 {
-    bump = makeBumpAllocator(MB(50));
+    bump = makeBumpAllocator(MB(20));
     if (!glfwInit())
         return -1;
 

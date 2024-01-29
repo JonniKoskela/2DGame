@@ -1,26 +1,27 @@
 #pragma once
 #include <vector>
 #include "GLrenderer.h"
-#include "actionInterface.h"
-#include "game.h"
+#include "attackActionStructs.h"
 
+std::vector<SlamVertex> generateSlamVertices(Vec2& pos, float mAngle, float range);
+std::vector<ArcVertex> generateArcVertices(Vec2& pos, float mAngle, float distance);
 
-
+bool arcHitDetection(float AttackAngle);
 //--------------------------------------------------------------------------ARC
 void startArcAttack()
 {
 	resetTimer();
-	actionBar.actions[0].active = true;
+
 	attacking = true;
 	Vec2 normalizedmPos = normalizeTo(player.pos, mPos);
 	float angle = atan2f(normalizedmPos.x, normalizedmPos.y);
 
-	if (arcHitDetection(angle) == true)
-		std::cout << "hit" << "\n";
+	//if (arcHitDetection(angle) == true)
+		//std::cout << "hit" << "\n";
 
 	std::vector<ArcVertex> arcVertices = generateArcVertices(player.pos, angle, 35.0f);
 	genArcBuffer(arcVertices);
-	std::cout << distanceBetween(gobo.position, player.pos);
+	//std::cout << distanceBetween(gobo.position, player.pos);
 }
 std::vector<ArcVertex> generateArcVertices(Vec2& pos, float mAngle, float distance)
 {
@@ -43,7 +44,7 @@ std::vector<ArcVertex> generateArcVertices(Vec2& pos, float mAngle, float distan
 
 		vertices.push_back(arcVertex);
 	}
-	std::cout << Vec2{ pos.x + distance * cosf(1), pos.y - distance * sinf(mAngle - 1) }<< "\n";
+	//std::cout << Vec2{ pos.x + distance * cosf(1), pos.y - distance * sinf(mAngle - 1) }<< "\n";
 
 	return vertices;
 }
@@ -58,7 +59,10 @@ bool arcHitDetection(float AttackAngle)
 	}
 	return false;
 }
+void processArc()
+{
 
+}
 
 //-----------------------------------------------------------------------SLAM
 void startSlamAttack()
@@ -68,12 +72,12 @@ void startSlamAttack()
 	Vec2 normalizedmPos = normalizeTo(player.pos, mPos);
 	float angle = atan2f(normalizedmPos.x, normalizedmPos.y);
 
-	if (arcHitDetection(angle) == true)
-		std::cout << "hit" << "\n";
+	//if (arcHitDetection(angle) == true)
+	//	std::cout << "hit" << "\n";
 
 	std::vector<SlamVertex> slamVertices = generateSlamVertices(player.pos, angle, 70.0f);
 	genSlamBuffer(slamVertices);
-	std::cout << distanceBetween(gobo.position, player.pos);
+	//std::cout << distanceBetween(gobo.position, player.pos);
 }
 
 std::vector<SlamVertex> generateSlamVertices(Vec2& pos, float mAngle, float range)

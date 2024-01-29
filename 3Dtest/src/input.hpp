@@ -6,7 +6,7 @@
 #include "game.h"
 #include "input.h"
 
-constexpr int KEYCOUNT = 3;
+constexpr int KEYCOUNT = 1;
 
 extern GLFWwindow* window;
 extern const float winHeight;
@@ -63,10 +63,10 @@ void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
 }
 
 void initializeInputs() {
-	gameState.keyMappings[MOVE_DOWN].keys.push_back(Key(GLFW_KEY_S));
-	gameState.keyMappings[MOVE_UP].keys.push_back(Key(GLFW_KEY_W));
-	gameState.keyMappings[MOVE_RIGHT].keys.push_back(Key(GLFW_KEY_D));
-	gameState.keyMappings[MOVE_LEFT].keys.push_back(Key(GLFW_KEY_A));
-	gameState.keyMappings[ATTACK_1].keys.push_back(Key(GLFW_KEY_1));
-	gameState.keyMappings[ATTACK_2].keys.push_back(Key(GLFW_KEY_2));
+	gameState.keyMappings[MOVE_DOWN].keys[0] = Key(GLFW_KEY_S);
+	gameState.keyMappings[MOVE_UP].keys[0] = Key(GLFW_KEY_W);
+	gameState.keyMappings[MOVE_RIGHT].keys[0] = Key(GLFW_KEY_D);
+	gameState.keyMappings[MOVE_LEFT].keys[0] = Key(GLFW_KEY_A);
+	gameState.keyMappings[ATTACK_1].keys[0] = Key(GLFW_KEY_1);
+	gameState.keyMappings[ATTACK_2].keys[0] = Key(GLFW_KEY_2);
 }

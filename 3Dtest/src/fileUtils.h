@@ -5,7 +5,6 @@
 #include <iostream>
 #include <math.h>
 #include <algorithm>
-#include "utils.h"
 
 
 #define b8 char

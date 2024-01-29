@@ -44,10 +44,9 @@ public:
 class KeyMapping
 {
 public:
-	std::vector<Key> keys{};
+	std::vector<Key> keys{3};
 
 	KeyMapping()
 	{
-		keys.reserve(3);
 	}
 };

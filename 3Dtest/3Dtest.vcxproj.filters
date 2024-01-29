@@ -59,13 +59,22 @@
     <ClInclude Include="src\camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\attacks.hpp">
+    <ClInclude Include="src\action\attacks.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\mobs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\actionInterface.h">
+    <ClInclude Include="src\action\action.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\itemInterface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\action\attackActionStructs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\action\action.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

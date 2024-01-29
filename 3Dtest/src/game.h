@@ -1,6 +1,6 @@
 #pragma once
 #include "input.h"
-#include "actionInterface.h"
+#include "action/action.h"
 
 #include <chrono>
 #include "mobs.h"
@@ -10,9 +10,11 @@ using Clock = std::chrono::steady_clock;
 auto previousTime = Clock::now();
 auto currentTime = Clock::now();
 constexpr float DELTA = (float)1 / 60;
-extern float deltaTime;
 static Mob gobo;
 ActionBar actionBar{};
+
+
+static float deltaTime = 0.0f;
 
 void getDT();
 void setupGame();

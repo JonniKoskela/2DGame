@@ -26,7 +26,7 @@ struct RenderData
 	
 	RenderData()
 	{
-		transforms.reserve(1000);
+		transforms.reserve(300);
 	}
 };
 

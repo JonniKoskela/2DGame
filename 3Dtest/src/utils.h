@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <string>
+#include "glm.hpp"
 
 constexpr long double MPI = 3.14159265358979323851;
 
@@ -95,6 +96,18 @@ struct Matrix4f
 				{
 					result.data[i][j] += data[i][k] * other.data[k][j];
 				}
+			}
+		}
+		return result;
+	}
+	operator glm::mat4() const
+	{
+		glm::mat4 result;
+		for (int i = 0; i < 4; ++i)
+		{
+			for (int j = 0; j < 4; ++j)
+			{
+				result[i][j] = data[i][j];
 			}
 		}
 		return result;
@@ -221,7 +234,7 @@ float approach(float current, float target, float increase)
 
 float toRadians()
 {
-
+	return 0.0f;
 }
 
 float distanceBetween(Vec2 posA, Vec2 posB)
@@ -230,3 +243,19 @@ float distanceBetween(Vec2 posA, Vec2 posB)
 	float distanceY = abs(posA.y - posB.y);
 	return sqrt(distanceX * distanceX + distanceY * distanceY);
 }
+
+//float getMilliseconds()
+//{
+//		auto currentTime = Clock::now();
+//		std::chrono::duration<float, std::milli> elapsed ;
+//		return elapsed.count();
+//}
+
+
+//void rotateTransform(Transform transform, float angle)
+//{
+//	float left 
+//	float top
+//	float right
+//	float bottom = transform.size.y
+//}
