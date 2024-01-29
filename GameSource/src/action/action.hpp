@@ -11,6 +11,8 @@ void startAttack(int actionID);
 void startArcAttack();
 void startSlamAttack();
 void processAttack(Action& action);
+void processArc();
+void processSlam();
 
 
 void ActionBarSlot::startAction()
@@ -20,12 +22,14 @@ void ActionBarSlot::startAction()
 		startAttack(this->boundAction.actionID);
 	}
 }
-void ActionBarSlot::bindActionBarSlot(ActionType type, ActionID id)
+void ActionBarSlot::bindActionBarSlot(Action action)
 {
-	this->boundAction = Action{};
-	this->boundAction.actionType = type;
+	this->boundAction = action;
+	this->boundAction.actionType = action.actionType;
+	this->boundAction.actionStaticType = action.actionStaticType;
 	this->active = true;
-	this->boundAction.actionID = id;
+	this->boundAction.actionID = action.actionID;
+
 }
 
 void startAttack(int actionID)
@@ -44,15 +48,22 @@ void startAttack(int actionID)
 Action loadAction(ActionID id)
 {
 	Action action{};
-	action.actionType = ACTION_ATTACK;
-	switch (id)
+	if(id > 50)
 	{
-	case ACTION_ATTACK:
-
-		action.actionCoolDown = 1500.0f;
-		break;
-	case ACTION_ITEM:
-		break;
+		action.actionType = ACTION_ATTACK;
+		switch (id)
+		{
+		case ARC_ATTACK:
+			action.actionCoolDown = 1.5f;
+			action.actionStaticType = ACTION_STATIC;
+			action.actionID = id;
+			break;
+		case SLAM_ATTACK:
+			action.actionCoolDown = 3.0f;
+			action.actionStaticType = ACTION_DYNAMIC;
+			action.actionID = id;
+			break;
+		}
 	}
 	std::cout << "loaded attack" << "\n";
 	return action;
@@ -72,7 +83,8 @@ void processAttack(Action& action)
 {
 	switch (action.actionType)
 	{
-	case ARC_ATTACK:
+	case SLAM_ATTACK:
+		processSlam();
 		break;
 	}
 }

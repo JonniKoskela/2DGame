@@ -32,7 +32,7 @@
     <ProjectGuid>{e8920417-05a4-4908-a7cf-6a5898d478b7}</ProjectGuid>
     <RootNamespace>My3Dtest</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>GLFW#123</ProjectName>
+    <ProjectName>game_engine</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

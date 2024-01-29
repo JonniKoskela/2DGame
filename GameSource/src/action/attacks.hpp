@@ -59,10 +59,6 @@ bool arcHitDetection(float AttackAngle)
 	}
 	return false;
 }
-void processArc()
-{
-
-}
 
 //-----------------------------------------------------------------------SLAM
 void startSlamAttack()
@@ -79,7 +75,16 @@ void startSlamAttack()
 	genSlamBuffer(slamVertices);
 	//std::cout << distanceBetween(gobo.position, player.pos);
 }
+void processSlam()
+{
+	Vec2 normalizedmPos = normalizeTo(player.pos, mPos);
+	float angle = atan2f(normalizedmPos.x, normalizedmPos.y);
 
+	//if (arcHitDetection(angle) == true)
+	//	std::cout << "hit" << "\n";
+
+	std::vector<SlamVertex> slamVertices = generateSlamVertices(player.pos, angle, 70.0f);
+}
 std::vector<SlamVertex> generateSlamVertices(Vec2& pos, float mAngle, float range)
 {
 	std::vector<SlamVertex> vertices{};

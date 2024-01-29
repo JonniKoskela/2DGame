@@ -36,7 +36,7 @@ public:
 	float coolDownTimer{ 0.0f };
 	bool onCooldown{ false };
 	Action boundAction{};
-	void bindActionBarSlot(ActionType type, ActionID id);
+	void bindActionBarSlot(Action);
 	void startAction();
 	
 

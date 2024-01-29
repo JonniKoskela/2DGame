@@ -64,38 +64,43 @@ void simulate()
 			player.speed.x = approach(player.speed.x, 0.0f, runReduce * DELTA);
 		}
 
-		if (pollAction(ATTACK_1,KEY_DOWN) == true && actionBar.actions[0].onCooldown!= true)
-		{
-			actionBar.actions[0].startAction();
-		}
-		else if (pollAction(ATTACK_2, KEY_DOWN) == true && actionBar.actions[1].onCooldown == true)
-		{
-			actionBar.actions[1].startAction();
-		}
-	}
-	if (attacking)
-	{
 
-	}
-	//update cooldowns && process Actions
-	{
-		for (ActionBarSlot actionSlot : actionBar.actions)
+		std::cout << "cd timer:" << actionBar.actions[0].coolDownTimer << "\n";
+		std::cout << "delta: " << deltaTime << "\n";
 		{
+			if (pollAction(ACTIONBAR_1, KEY_DOWN) == true && actionBar.actions[0].onCooldown == false)
+			{
+				std::cout << actionBar.actions[0].coolDownTimer<< "\n";
+				std::cout << actionBar.actions[0].boundAction.actionCoolDown<< "\n";
+				actionBar.actions[0].startAction();
+				actionBar.actions[0].onCooldown = true;
+			}
+			if (pollAction(ACTIONBAR_2, KEY_DOWN) == true && actionBar.actions[1].onCooldown == false)
+			{
+				actionBar.actions[1].coolDownTimer;
+				actionBar.actions[1].startAction();
+				actionBar.actions[1].onCooldown = true;
+			}
+		}
+	}
+
+	//update cooldowns && process Actions
+		for (ActionBarSlot& actionSlot : actionBar.actions)
+		{
+			actionSlot.coolDownTimer += deltaTime;
 			if (actionSlot.onCooldown)
 			{
-				if (actionSlot.boundAction.actionStaticType == ACTION_DYNAMIC)
-				{
-					processAction(actionSlot.boundAction);
-				}
-				actionSlot.coolDownTimer += deltaTime;
 				if (actionSlot.coolDownTimer >= actionSlot.boundAction.actionCoolDown)
 				{
 					actionSlot.coolDownTimer = 0.0f;
 					actionSlot.onCooldown = false;
 				}
+				if (actionSlot.boundAction.actionStaticType == ACTION_DYNAMIC)
+				{
+					processAction(actionSlot.boundAction);
+				}
 			}
 		}
-	}
 
 	//calculate new position if changed
 	{
@@ -111,7 +116,7 @@ void mainGameLoop()
 	{
 		// update current physical state of mapped keys. done by glfw
 		updateKeyState();
-
+		updateMousePos();
 		// calculate speed, movement, cooldowns, start attacks...
 		simulate();
 		deltaTime -= DELTA;
@@ -134,9 +139,9 @@ void setupGame()
 	gobo = createMob(MOB_GOBLIN);
 	gobo.position = { 100.0f, 100.0f };
 	actionBar.actions.reserve(5);
-	actionBar.actions[0].bindActionBarSlot(ACTION_ATTACK, ARC_ATTACK);
+	actionBar.actions[0].bindActionBarSlot(loadAction(ARC_ATTACK));
 	actionBar.actions[0].active = true;
-	actionBar.actions[1].bindActionBarSlot(ACTION_ATTACK, SLAM_ATTACK);
+	actionBar.actions[1].bindActionBarSlot(loadAction(SLAM_ATTACK));
 	actionBar.actions[1].active = true;
 }
 
@@ -149,3 +154,12 @@ void getDT()
 	deltaTime += dt.count();
 }
 
+void updateMousePos()
+{
+	double xPos{}, yPos{};
+	glfwGetCursorPos(window, &xPos, &yPos);
+	OrtographicCamera camera = renderData->gameCamera;
+
+	mPos.x = (xPos - (winWidth / 2)) / (winWidth / renderData->gameCamera.dimensions.x) + camera.position.x;
+	mPos.y = -(yPos - winHeight / 2) / (winHeight / renderData->gameCamera.dimensions.y) + camera.position.y;
+}

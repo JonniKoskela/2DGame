@@ -41,7 +41,7 @@ int main(void)
 		glfwMakeContextCurrent(window);
 		//glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 		glfwSetKeyCallback(window, keyCallback);
-		glfwSetCursorPosCallback(window, cursor_position_callback);
+		//glfwSetCursorPosCallback(window, cursor_position_callback);
 
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 		{

@@ -20,6 +20,8 @@ GLuint fadeDurationLocation{};
 GLuint currentTimeLocation{};
 GLuint attackFlagLocation{};
 
+float arcTimer{ 0.0f };
+float slamTimer{ 0.0f };
 
 
 
@@ -40,5 +42,5 @@ void genArcBuffer(std::vector<ArcVertex> arcVertices)
 void genSlamBuffer(std::vector<SlamVertex> slamVertices)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, slamVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(SlamVertex) * slamVertices.size(), slamVertices.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(SlamVertex) * slamVertices.size(), slamVertices.data(), GL_DYNAMIC_DRAW);
 }

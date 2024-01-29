@@ -158,7 +158,7 @@ void openGLRender()
 		glUniformMatrix4fv(arcShaderProjection, 1, GL_FALSE, &orthoProjection.data[0][0]);
 		for (const ActionBarSlot& action : actionBar.actions)
 		{
-			if (action.active)
+			if (action.onCooldown)
 			{
 				renderAttack(action.boundAction.actionID);
 			}
@@ -211,9 +211,7 @@ void renderAttack(int attackType)
 		break;
 
 	case SLAM_ATTACK:
-		static bool attackStarted{};
 		static float angle{};
-			attackStarted = true;
 			Vec2 normalizedmPos = normalizeTo(player.pos, mPos);
 			angle = atan2f(normalizedmPos.x, normalizedmPos.y);
 		std::vector<SlamVertex> slamVertices = generateSlamVertices(player.pos, angle, 70.0f);
@@ -224,7 +222,16 @@ void renderAttack(int attackType)
 }
 
 
-
+	//case SLAM_ATTACK:
+	//	static bool attackStarted{};
+	//	static float angle{};
+	//	attackStarted = true;
+	//	Vec2 normalizedmPos = normalizeTo(player.pos, mPos);
+	//	angle = atan2f(normalizedmPos.x, normalizedmPos.y);
+	//	std::vector<SlamVertex> slamVertices = generateSlamVertices(player.pos, angle, 70.0f);
+	//	genSlamBuffer(slamVertices);
+	//	renderSlam();
+	//	break;
 
 
 

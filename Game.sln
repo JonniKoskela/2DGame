@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33815.320
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "3Dtest", "3Dtest\3Dtest.vcxproj", "{E8920417-05A4-4908-A7CF-6A5898D478B7}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "game_engine", "GameSource\GameSource.vcxproj", "{E8920417-05A4-4908-A7CF-6A5898D478B7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

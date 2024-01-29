@@ -16,8 +16,8 @@ enum GameInputType
 
 	PAUSE,
 	SHIFT,
-	ATTACK_1,
-	ATTACK_2,
+	ACTIONBAR_1,
+	ACTIONBAR_2,
 	GAME_INPUT_COUNT
 };
 
