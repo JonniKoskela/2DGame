@@ -3,7 +3,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "action/attackActionStructs.h"
-#include <vector>
+#include "GLrenderer_attackQueue.hpp"
+
 GLuint orthoID{};
 GLuint screenSizeID{};
 GLuint transformSBO{};
@@ -16,29 +17,42 @@ GLuint slamVBO{};
 
 GLuint arcShader{};
 GLuint arcShaderProjection{};
-GLuint fadeDurationLocation{};
+GLuint arcFadeDurationLocation{};
+GLuint slamFadeDurationLocation{};
 GLuint currentTimeLocation{};
 GLuint attackFlagLocation{};
+GLuint slamDurationLocation{};
+
+static bool renderSlamBool{ false };
 
 
 
-
-bool compileShaders(BumpAllocator* bump);
-bool compileArcShaders(BumpAllocator* bump);
-void renderArc();
-void renderSlam();
-void renderAttack(int attackType);
-
-
-void genArcBuffer(std::vector<ArcVertex> arcVertices)
+void arcRenderData(std::vector<attackVertex> arcVertices, float arcTimer)
 {
+	attackRenderQueue.push_back(RENDER_ARC);
+	glUniform1f(arcFadeDurationLocation, 0.7f);
+	glUniform1f(currentTimeLocation, arcTimer);
 	glBindBuffer(GL_ARRAY_BUFFER, arcVBO);
-
-	glBufferData(GL_ARRAY_BUFFER, sizeof(ArcVertex) * arcVertices.size(), arcVertices.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(attackVertex) * arcVertices.size(), arcVertices.data(), GL_STATIC_DRAW);
+	GLenum error = glGetError();
+	if (error)
+	{
+		std::cout << "GLERROR SLAMRENDERDATA " << "\n";
+	}
 }
 
-void genSlamBuffer(std::vector<SlamVertex> slamVertices)
+void slamRenderData(std::vector<attackVertex> slamVertices, float slamTimer)
 {
+	attackRenderQueue.push_back(RENDER_SLAM);
+	glUniform1f(slamFadeDurationLocation, 1.5f);
+	glUniform1f(slamDurationLocation, slamTimer);
 	glBindBuffer(GL_ARRAY_BUFFER, slamVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(SlamVertex) * slamVertices.size(), slamVertices.data(), GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(attackVertex) * slamVertices.size(), slamVertices.data(), GL_DYNAMIC_DRAW);
+
+	GLenum error = glGetError();
+	if (error)
+	{
+		std::cout << "GLERROR SLAMRENDERDATA " << "\n";
+	}
 }
+

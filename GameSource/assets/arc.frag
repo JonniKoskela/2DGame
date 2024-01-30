@@ -1,9 +1,11 @@
 #version 430 core
 out vec4 FragColor;
 uniform vec3 arcColor;
-uniform float fadeDuration;
+uniform float slamFadeDuration;
+uniform float arcFadeDuration;
 uniform float currentTime;
 uniform int attackFlag;
+uniform float slamDuration;
 
 #ifndef PI
 #define PI 3.141592653589793
@@ -17,12 +19,12 @@ void main()
     switch (attackFlag)
     {
         case 0:
-        float alpha = (1-(currentTime / fadeDuration));
+        float alpha = (1-(currentTime / arcFadeDuration));
         FragColor = vec4(arcColor, alpha);
         break;
     
     case 1:
-        float alphaSlam =(currentTime / fadeDuration);
+        float alphaSlam = (slamDuration / slamFadeDuration);
         FragColor = vec4(arcColor, alphaSlam);
         break;
     }

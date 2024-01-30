@@ -2,24 +2,17 @@
 #include <iostream>
 #include <chrono>
 #include "action.h"
+#include "attackTimer.hpp"
 
 
-void resetTimer();
 Action loadAction(ActionID id);
 void startAttack(int actionID);
-void startArcAttack();
-void startSlamAttack();
+//void startArcAttack();
+//void startSlamAttack();
 void processAttack(Action& action);
 void processSlam(Action& action);
+void processArc(Action& action);
 
-
-void ActionBarSlot::startAction()
-{
-	if (this->boundAction.actionType == ACTION_ATTACK)
-	{
-		startAttack(this->boundAction.actionID);
-	}
-}
 void ActionBarSlot::bindActionBarSlot(Action action)
 {
 	this->boundAction = action;
@@ -30,18 +23,26 @@ void ActionBarSlot::bindActionBarSlot(Action action)
 	this->boundAction.attackTimer = loadTimerProperties(action);
 }
 
-void startAttack(int actionID)
-{
-	switch (actionID)
-	{
-	case ARC_ATTACK:
-		startArcAttack();
-		break;
-	case SLAM_ATTACK:
-		startSlamAttack();
-		break;
-	}
-}
+//void ActionBarSlot::startAction()
+//{
+//	if (this->boundAction.actionType == ACTION_ATTACK)
+//	{
+//		startAttack(this->boundAction.actionID);
+//	}
+//}
+
+//void startAttack(int actionID)
+//{
+//	switch (actionID)
+//	{
+//	case ARC_ATTACK:
+//		startArcAttack();
+//		break;
+//	case SLAM_ATTACK:
+//		startSlamAttack();
+//		break;
+//	}
+//}
 
 Action loadAction(ActionID id)
 {
@@ -52,12 +53,10 @@ Action loadAction(ActionID id)
 		switch (id)
 		{
 		case ARC_ATTACK:
-			a.actionCoolDown = 1.5f;
 			a.actionStaticType = ACTION_STATIC;
 			a.actionID = id;
 			break;
 		case SLAM_ATTACK:
-			a.actionCoolDown = 3.0f;
 			a.actionStaticType = ACTION_DYNAMIC;
 			a.actionID = id;
 			break;
@@ -67,7 +66,7 @@ Action loadAction(ActionID id)
 	return a;
 }
 
-void processDynamic(Action& action)
+void processAction(Action& action)
 {
 	switch (action.actionType)
 	{
@@ -84,5 +83,7 @@ void processAttack(Action& action)
 	case SLAM_ATTACK:
 		processSlam(action);
 		break;
+	case ARC_ATTACK:
+		processArc(action);
 	}
 }

@@ -12,9 +12,9 @@ AttackTimer loadTimerProperties(Action& action)
 		switch (action.actionID)
 		{
 		case ARC_ATTACK:
-			attackTimer.dynamic_attackMaxTime = 0.0f;
-			attackTimer.renderTime = 1.0f;
+			attackTimer.renderTime = 0.7f;
 			attackTimer.fadeTime = 1.0f;
+			attackTimer.totalCoolDown = 3.0f;
 			break;
 		
 		}
@@ -28,8 +28,9 @@ AttackTimer loadTimerProperties(Action& action)
 		case SLAM_ATTACK:
 		{
 			attackTimer.dynamic_attackMaxTime = 2.0f;
-			attackTimer.renderTime = 1.0f;
-			attackTimer.fadeTime = 1.0f;
+			attackTimer.renderTime = 2.0f;
+			attackTimer.fadeTime = 2.0f;
+			attackTimer.totalCoolDown = 3.0f;
 		}
 		}
 		return attackTimer;

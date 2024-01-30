@@ -4,10 +4,9 @@
 class Action
 {
 public:
+	int inPhase{ 0 };
 	int actionType = ACTION_EMPTY;
 	int actionID = ACTIONID_EMPTY;
-	float actionCoolDown{ 0.0f };
-	float coolDownTimer{};
 	int actionStaticType{ 0 };
 	AttackTimer attackTimer{};
 
@@ -21,8 +20,6 @@ public:
 	bool onCooldown{ false };
 	Action boundAction{};
 	void bindActionBarSlot(Action);
-	void startAction();
-	
 
 	ActionBarSlot() = default;
 };

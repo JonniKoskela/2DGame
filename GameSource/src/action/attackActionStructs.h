@@ -12,12 +12,8 @@ auto currentArcTime = Clock::now();
 int arcVertexCapacity{ 25 };
 bool attacking = false;
 
-struct ArcVertex
+struct attackVertex
 {
 	Vec2 vertex;
 };
 
-struct SlamVertex
-{
-	Vec2 vertex;
-};

@@ -250,6 +250,7 @@
     <ClInclude Include="src\game.h" />
     <ClInclude Include="src\GLrenderer.h" />
     <ClInclude Include="src\camera.h" />
+    <ClInclude Include="src\GLrenderer_attackQueue.hpp" />
     <ClInclude Include="src\itemInterface.h" />
     <ClInclude Include="src\mobs.h" />
     <ClInclude Include="src\input.h" />

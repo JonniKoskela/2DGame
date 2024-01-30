@@ -69,14 +69,13 @@ void simulate()
 		{
 			if (pollAction(ACTIONBAR_1, KEY_DOWN) == true && actionBar.actions[0].onCooldown == false)
 			{
-				std::cout << actionBar.actions[0].coolDownTimer<< "\n";
-				std::cout << actionBar.actions[0].boundAction.actionCoolDown<< "\n";
-				actionBar.actions[0].startAction();
+				processAction(actionBar.actions[0].boundAction);
 				actionBar.actions[0].onCooldown = true;
 			}
 			if (pollAction(ACTIONBAR_2, KEY_DOWN) == true && actionBar.actions[1].onCooldown == false)
 			{
-				actionBar.actions[1].startAction();
+				
+				processAction(actionBar.actions[1].boundAction);
 				actionBar.actions[1].onCooldown = true;
 			}
 		}
@@ -87,17 +86,17 @@ void simulate()
 		{
 			if (actionSlot.onCooldown)
 			{
-				std::cout << "cd timer:" << actionSlot.boundAction.coolDownTimer<< "\n";
+				std::cout << "cd timer:" << actionSlot.boundAction.attackTimer.coolDownTimer<< "\n";
 				std::cout << "delta: " << deltaTime << "\n";
-				actionSlot.boundAction.coolDownTimer += deltaTime;
-				if (actionSlot.boundAction.coolDownTimer >= actionSlot.boundAction.actionCoolDown)
+				actionSlot.boundAction.attackTimer.coolDownTimer += deltaTime;
+				if (actionSlot.boundAction.attackTimer.coolDownTimer >= actionSlot.boundAction.attackTimer.totalCoolDown)
 				{
-					actionSlot.boundAction.coolDownTimer = 0.0f;
+					actionSlot.boundAction.attackTimer.coolDownTimer = 0.0f;
 					actionSlot.onCooldown = false;
 				}
 				if (actionSlot.boundAction.actionStaticType == ACTION_DYNAMIC)
 				{
-					processDynamic(actionSlot.boundAction);
+					processAction(actionSlot.boundAction);
 				}
 			}
 		}

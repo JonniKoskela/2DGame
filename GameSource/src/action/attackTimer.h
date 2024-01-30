@@ -10,4 +10,6 @@ public:
 	float renderTime{};
 	float fadeTime{};
 	float dynamic_attackMaxTime{};
+	float totalCoolDown{};
+	float coolDownTimer{};
 };

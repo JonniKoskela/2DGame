@@ -96,8 +96,10 @@ bool glInit(BumpAllocator* bump)
 		glUniform3f(glGetUniformLocation(arcShader, "arcColor"), 1.0f, 1.0f, 1.0f);
 		arcShaderProjection = glGetUniformLocation(arcShader, "orthoProjection");
 		currentTimeLocation = glGetUniformLocation(arcShader, "currentTime");
-		fadeDurationLocation = glGetUniformLocation(arcShader, "fadeDuration");
+		slamFadeDurationLocation = glGetUniformLocation(arcShader, "slamFadeDuration");
 		attackFlagLocation = glGetUniformLocation(arcShader, "attackFlag");
+		slamDurationLocation = glGetUniformLocation(arcShader, "slamDuration");
+		arcFadeDurationLocation = glGetUniformLocation(arcShader, "arcFadeDuration");
 
 
 		error = glGetError();
@@ -120,7 +122,7 @@ bool glInit(BumpAllocator* bump)
 
 void openGLRender()
 {
-		static GLenum error{};
+		GLenum error{};
 		OrtographicCamera camera = renderData->gameCamera;
 		GLuint rotationMatrixLocation{};
 
@@ -136,7 +138,11 @@ void openGLRender()
 		glClearColor(119.0f / 255.0f, 33.0f / 255.0f, 111.0f / 255.0f, 1.0f);
 		glClearDepth(0.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+		error = glGetError();
+		if (error)
+		{
+			std::cout << "GLERROR l2: " << error << "\n";
+		}
 		glUniform2fv(screenSizeID, 1, &screenSize.x);
 		glUniformMatrix4fv(orthoID, 1, GL_FALSE, &orthoProjection.data[0][0]);
 		{
@@ -155,12 +161,9 @@ void openGLRender()
 	{
 		glUseProgram(arcShader);
 		glUniformMatrix4fv(arcShaderProjection, 1, GL_FALSE, &orthoProjection.data[0][0]);
-		for (ActionBarSlot& action : actionBar.actions)
+		if (attackRenderQueue.size() != 0)
 		{
-			if (action.onCooldown)
-			{
-				renderAttack(action.boundAction.actionID);
-			}
+			renderAttacks(attackRenderQueue);
 		}
 	}
 
@@ -175,11 +178,11 @@ void openGLRender()
 
 void renderArc() {
 	//std::cout << arcTimer << "\n";
-	glUniform1f(currentTimeLocation, arcTimer);
 
+	glUniform1i(attackFlagLocation, 0);
 	glBindBuffer(GL_ARRAY_BUFFER, arcVBO);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(ArcVertex), 0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(attackVertex), 0);
 
 	glDrawArrays(GL_TRIANGLE_FAN, 0, arcVertexCapacity);
 	glDisableVertexAttribArray(0);
@@ -187,44 +190,26 @@ void renderArc() {
 
 void renderSlam()
 {
+	GLenum error = glGetError();
+	if (error)
+	{
+		std::cout << "GLERROR RENDERSLAM" << "\n";
+	}
 	//std::cout << arcTimer << "\n";
-	glUniform1f(currentTimeLocation, arcTimer);
 	glUniform1i(attackFlagLocation, 1);
 	glBindBuffer(GL_ARRAY_BUFFER, slamVBO);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(SlamVertex), 0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(attackVertex), 0);
 	glDrawArrays(GL_QUADS, 0, 4);
 	glDisableVertexAttribArray(0);
-}
-
-
-void renderAttack(int attackType)
-{
-	switch (attackType)
+	error = glGetError();
+	if (error)
 	{
-	case ARC_ATTACK:
-		glUniform1i(attackFlagLocation, 0);
-		renderArc();
-		break;
-
-	case SLAM_ATTACK:
-		glUniform1i(attackFlagLocation, 1);
-		renderSlam();
-		break;
+		std::cout << "GLERROR RENDERSLAM" << "\n";
 	}
 }
 
 
-	//case SLAM_ATTACK:
-	//	static bool attackStarted{};
-	//	static float angle{};
-	//	attackStarted = true;
-	//	Vec2 normalizedmPos = normalizeTo(player.pos, mPos);
-	//	angle = atan2f(normalizedmPos.x, normalizedmPos.y);
-	//	std::vector<SlamVertex> slamVertices = generateSlamVertices(player.pos, angle, 70.0f);
-	//	genSlamBuffer(slamVertices);
-	//	renderSlam();
-	//	break;
 
 
 
