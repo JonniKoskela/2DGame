@@ -98,7 +98,6 @@ bool glInit(BumpAllocator* bump)
 		currentTimeLocation = glGetUniformLocation(arcShader, "currentTime");
 		fadeDurationLocation = glGetUniformLocation(arcShader, "fadeDuration");
 		attackFlagLocation = glGetUniformLocation(arcShader, "attackFlag");
-		glUniform1f(fadeDurationLocation, attackFadeTime);
 
 
 		error = glGetError();
@@ -156,7 +155,7 @@ void openGLRender()
 	{
 		glUseProgram(arcShader);
 		glUniformMatrix4fv(arcShaderProjection, 1, GL_FALSE, &orthoProjection.data[0][0]);
-		for (const ActionBarSlot& action : actionBar.actions)
+		for (ActionBarSlot& action : actionBar.actions)
 		{
 			if (action.onCooldown)
 			{
@@ -175,7 +174,6 @@ void openGLRender()
 
 
 void renderArc() {
-	arcTimer += getCurrentTime();
 	//std::cout << arcTimer << "\n";
 	glUniform1f(currentTimeLocation, arcTimer);
 
@@ -189,7 +187,6 @@ void renderArc() {
 
 void renderSlam()
 {
-	arcTimer += getCurrentTime();
 	//std::cout << arcTimer << "\n";
 	glUniform1f(currentTimeLocation, arcTimer);
 	glUniform1i(attackFlagLocation, 1);
@@ -211,11 +208,7 @@ void renderAttack(int attackType)
 		break;
 
 	case SLAM_ATTACK:
-		static float angle{};
-			Vec2 normalizedmPos = normalizeTo(player.pos, mPos);
-			angle = atan2f(normalizedmPos.x, normalizedmPos.y);
-		std::vector<SlamVertex> slamVertices = generateSlamVertices(player.pos, angle, 70.0f);
-		genSlamBuffer(slamVertices);
+		glUniform1i(attackFlagLocation, 1);
 		renderSlam();
 		break;
 	}

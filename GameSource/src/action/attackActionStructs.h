@@ -10,7 +10,6 @@ auto previousArcTime = Clock::now();
 auto currentArcTime = Clock::now();
 
 int arcVertexCapacity{ 25 };
-float attackFadeTime = 1500.0f;
 bool attacking = false;
 
 struct ArcVertex

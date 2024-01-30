@@ -20,8 +20,6 @@ GLuint fadeDurationLocation{};
 GLuint currentTimeLocation{};
 GLuint attackFlagLocation{};
 
-float arcTimer{ 0.0f };
-float slamTimer{ 0.0f };
 
 
 

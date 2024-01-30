@@ -2,8 +2,9 @@
 #include <vector>
 #include "GLrenderer.h"
 #include "attackActionStructs.h"
+#include "attackTimer.h"
 
-std::vector<SlamVertex> generateSlamVertices(Vec2& pos, float mAngle, float range);
+std::vector<SlamVertex> generateSlamVertices(Vec2& pos, float mAngle, float range, float slamTimer);
 std::vector<ArcVertex> generateArcVertices(Vec2& pos, float mAngle, float distance);
 
 bool arcHitDetection(float AttackAngle);
@@ -63,7 +64,7 @@ bool arcHitDetection(float AttackAngle)
 //-----------------------------------------------------------------------SLAM
 void startSlamAttack()
 {
-	resetTimer();
+
 	attacking = true;
 	Vec2 normalizedmPos = normalizeTo(player.pos, mPos);
 	float angle = atan2f(normalizedmPos.x, normalizedmPos.y);
@@ -71,28 +72,30 @@ void startSlamAttack()
 	//if (arcHitDetection(angle) == true)
 	//	std::cout << "hit" << "\n";
 
-	std::vector<SlamVertex> slamVertices = generateSlamVertices(player.pos, angle, 70.0f);
-	genSlamBuffer(slamVertices);
 	//std::cout << distanceBetween(gobo.position, player.pos);
 }
-void processSlam()
+void processSlam(Action& action)
 {
 	Vec2 normalizedmPos = normalizeTo(player.pos, mPos);
 	float angle = atan2f(normalizedmPos.x, normalizedmPos.y);
+	if ()
+	{
 
+	}
 	//if (arcHitDetection(angle) == true)
 	//	std::cout << "hit" << "\n";
 
-	std::vector<SlamVertex> slamVertices = generateSlamVertices(player.pos, angle, 70.0f);
+	std::vector<SlamVertex> slamVertices = generateSlamVertices(player.pos, angle, 70.0f, slamTimer);
+	genSlamBuffer(slamVertices);
 }
-std::vector<SlamVertex> generateSlamVertices(Vec2& pos, float mAngle, float range)
+std::vector<SlamVertex> generateSlamVertices(Vec2& pos, float mAngle, float range, float slamTimer)
 {
 	std::vector<SlamVertex> vertices{};
 	vertices.reserve(4);
 	float angle = mAngle + 0.5f * fPi;
 	float distance = 30.0f;
 	float width = 50.0f;
-	float endRange = distance + (range * arcTimer / attackFadeTime);
+	float endRange = distance + (range * );
 	float innerAngle = tanf(width * 0.5f / distance);
 	float outerAngle = tanf(width * 0.5f / endRange);
 
@@ -105,25 +108,25 @@ std::vector<SlamVertex> generateSlamVertices(Vec2& pos, float mAngle, float rang
 
 
 //---------------------------------------------------------------UTILS
-void resetTimer()
-{
-	arcTimer = 0.0f;
-	previousArcTime = Clock::now();
-	currentArcTime = Clock::now();
-}
+//void resetTimer()
+//{
+//	arcTimer = 0.0f;
+//	previousArcTime = Clock::now();
+//	currentArcTime = Clock::now();
+//}
 
 
 
 
-float getCurrentTime() 
-{
-	currentArcTime = Clock::now();
-	auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(currentArcTime - previousArcTime);
-	previousArcTime = currentArcTime;
-	if (arcTimer >= attackFadeTime)
-	{
-		attacking = false;
-	}
-	return elapsed.count();
-}
+//float getCurrentTime() 
+//{
+//	currentArcTime = Clock::now();
+//	auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(currentArcTime - previousArcTime);
+//	previousArcTime = currentArcTime;
+//	if (arcTimer >= arcFadeTime)
+//	{
+//		attacking = false;
+//	}
+//	return elapsed.count();
+//}
 

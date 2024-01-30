@@ -9,6 +9,7 @@
 #include "action/attackActionStructs.h"
 #include "game.h"
 #include <math.h>
+#include "action/attackTimer.hpp"
 
 
 
@@ -65,8 +66,6 @@ void simulate()
 		}
 
 
-		std::cout << "cd timer:" << actionBar.actions[0].coolDownTimer << "\n";
-		std::cout << "delta: " << deltaTime << "\n";
 		{
 			if (pollAction(ACTIONBAR_1, KEY_DOWN) == true && actionBar.actions[0].onCooldown == false)
 			{
@@ -77,7 +76,6 @@ void simulate()
 			}
 			if (pollAction(ACTIONBAR_2, KEY_DOWN) == true && actionBar.actions[1].onCooldown == false)
 			{
-				actionBar.actions[1].coolDownTimer;
 				actionBar.actions[1].startAction();
 				actionBar.actions[1].onCooldown = true;
 			}
@@ -87,17 +85,19 @@ void simulate()
 	//update cooldowns && process Actions
 		for (ActionBarSlot& actionSlot : actionBar.actions)
 		{
-			actionSlot.coolDownTimer += deltaTime;
 			if (actionSlot.onCooldown)
 			{
-				if (actionSlot.coolDownTimer >= actionSlot.boundAction.actionCoolDown)
+				std::cout << "cd timer:" << actionSlot.boundAction.coolDownTimer<< "\n";
+				std::cout << "delta: " << deltaTime << "\n";
+				actionSlot.boundAction.coolDownTimer += deltaTime;
+				if (actionSlot.boundAction.coolDownTimer >= actionSlot.boundAction.actionCoolDown)
 				{
-					actionSlot.coolDownTimer = 0.0f;
+					actionSlot.boundAction.coolDownTimer = 0.0f;
 					actionSlot.onCooldown = false;
 				}
 				if (actionSlot.boundAction.actionStaticType == ACTION_DYNAMIC)
 				{
-					processAction(actionSlot.boundAction);
+					processDynamic(actionSlot.boundAction);
 				}
 			}
 		}
