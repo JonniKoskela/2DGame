@@ -29,7 +29,6 @@ static bool renderSlamBool{ false };
 
 void arcRenderData(std::vector<attackVertex> arcVertices, float arcTimer)
 {
-	attackRenderQueue.push_back(RENDER_ARC);
 	glUniform1f(arcFadeDurationLocation, 0.7f);
 	glUniform1f(currentTimeLocation, arcTimer);
 	glBindBuffer(GL_ARRAY_BUFFER, arcVBO);
@@ -43,7 +42,6 @@ void arcRenderData(std::vector<attackVertex> arcVertices, float arcTimer)
 
 void slamRenderData(std::vector<attackVertex> slamVertices, float slamTimer)
 {
-	attackRenderQueue.push_back(RENDER_SLAM);
 	glUniform1f(slamFadeDurationLocation, 1.5f);
 	glUniform1f(slamDurationLocation, slamTimer);
 	glBindBuffer(GL_ARRAY_BUFFER, slamVBO);

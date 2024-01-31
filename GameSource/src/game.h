@@ -20,7 +20,8 @@ void setupGame();
 Vec2 toWorldCoordinates(Vec2 position);
 void updateMousePos();
 
-void startArcAttack();
+void checkActionRenderStatus(ActionBar&);
+//void startArcAttack();
 bool arcHitDetection(float AttackAngle);
 
 struct GameState

@@ -15,20 +15,27 @@ bool arcHitDetection(float AttackAngle);
 void processArc(Action& action)
 {
 	float arcTimer = action.attackTimer.coolDownTimer;
-	std::vector<attackVertex>  arcVertices{};
-	if(arcTimer < action.attackTimer.renderTime)
+	if (arcTimer < action.attackTimer.renderTime)
 	{
-		Vec2 normalizedmPos = normalizeTo(player.pos, mPos);
-		float angle = atan2f(normalizedmPos.x, normalizedmPos.y);
+	std::vector<attackVertex> arcVertices{};
 
 		if (arcTimer == 0.0f)
 		{
+			Vec2 normalizedmPos = normalizeTo(player.pos, mPos);
+			float angle = atan2f(normalizedmPos.x, normalizedmPos.y);
+			arcVertices = generateArcVertices(player.pos, angle, 70.0f, arcTimer);
+			arcRenderData(arcVertices, arcTimer);
+		}
+		else
+		{
+			Vec2 normalizedmPos = normalizeTo(player.pos, mPos);
+			float angle = atan2f(normalizedmPos.x, normalizedmPos.y);
 			arcVertices = generateArcVertices(player.pos, angle, 70.0f, arcTimer);
 			arcRenderData(arcVertices, arcTimer);
 		}
 	}
 
-	else return;
+	return;
 }
 std::vector<attackVertex> generateArcVertices(Vec2& pos, float mAngle, float distance, float arcTimer)
 {
@@ -74,9 +81,9 @@ void processSlam(Action& action)
 	std::cout << slamTimer << "\n";
 	Vec2 normalizedmPos = normalizeTo(player.pos, mPos);
 	float angle = atan2f(normalizedmPos.x, normalizedmPos.y);
-	if (slamTimer < 1.5f)
+	if (slamTimer < action.attackTimer.dynamic_attackMaxTime)
 	{
-		std::vector<attackVertex> slamVertices = generateSlamVertices(player.pos, angle, 70.0f, slamTimer);
+		std::vector<attackVertex> slamVertices = generateSlamVertices(player.pos, angle, 30.0f, slamTimer);
 		slamRenderData(slamVertices, slamTimer);
 	}
 	else

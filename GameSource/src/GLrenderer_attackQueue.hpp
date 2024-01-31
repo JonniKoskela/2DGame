@@ -6,22 +6,17 @@ struct attackRenderData
 	std::vector<attackVertex> vertices{};
 	int attackFlag{};
 };
-enum AttackRenderID
-{
-	RENDER_ARC,
-	RENDER_SLAM
-};
-std::vector<AttackRenderID> attackRenderQueue{};
+std::vector<ActionID> attackRenderQueue{};
 
 bool compileShaders(BumpAllocator* bump);
 bool compileArcShaders(BumpAllocator* bump);
 void renderArc();
 void renderSlam();
-void renderAttack(AttackRenderID);
+void renderAttack(ActionID);
 
-void renderAttacks(std::vector<AttackRenderID>& attackQueue)
+void renderAttacks(std::vector<ActionID>& attackQueue)
 {
-	for (AttackRenderID renderID : attackQueue)
+	for (ActionID renderID : attackQueue)
 	{
 		renderAttack(renderID);
 	}
@@ -30,15 +25,15 @@ void renderAttacks(std::vector<AttackRenderID>& attackQueue)
 }
 
 
-void renderAttack(AttackRenderID id)
+void renderAttack(ActionID id)
 {
 	switch (id)
 	{
-	case RENDER_ARC:
+	case ARC_ATTACK:
 		renderArc();
 		break;
 
-	case RENDER_SLAM:
+	case SLAM_ATTACK:
 		renderSlam();
 		break;
 	}

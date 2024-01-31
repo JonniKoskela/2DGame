@@ -9,6 +9,8 @@ Action loadAction(ActionID id);
 void startAttack(int actionID);
 //void startArcAttack();
 //void startSlamAttack();
+void processAttack_dynamic(Action& action);
+void processAttack_static(Action& action);
 void processAttack(Action& action);
 void processSlam(Action& action);
 void processArc(Action& action);
@@ -71,8 +73,14 @@ void processAction(Action& action)
 	switch (action.actionType)
 	{
 	case ACTION_ATTACK:
-		processAttack(action);
-		break;
+		if (action.actionStaticType == ACTION_STATIC)
+		{
+			processAttack_static(action);
+		}
+		if (action.actionStaticType == ACTION_DYNAMIC)
+		{
+			processAttack_dynamic(action);
+		}
 	}
 }
 
@@ -85,5 +93,23 @@ void processAttack(Action& action)
 		break;
 	case ARC_ATTACK:
 		processArc(action);
+	}
+}
+
+void processAttack_static(Action& action)
+{
+	switch (action.actionID)
+	{
+	case ARC_ATTACK:
+		processArc(action);
+	}
+}
+void processAttack_dynamic(Action& action)
+{
+	switch (action.actionID)
+	{
+	case SLAM_ATTACK:
+		processSlam(action);
+		break;
 	}
 }

@@ -19,12 +19,12 @@ void main()
     switch (attackFlag)
     {
         case 0:
-        float alpha = (1-(currentTime / arcFadeDuration));
+        float alpha = 1-(currentTime / arcFadeDuration);
         FragColor = vec4(arcColor, alpha);
         break;
     
     case 1:
-        float alphaSlam = (slamDuration / slamFadeDuration);
+        float alphaSlam = slamDuration / slamFadeDuration;
         FragColor = vec4(arcColor, alphaSlam);
         break;
     }

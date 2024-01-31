@@ -10,6 +10,7 @@
 #include "game.h"
 #include <math.h>
 #include "action/attackTimer.hpp"
+#include "GLrenderer_attackQueue.hpp"
 
 
 
@@ -86,17 +87,18 @@ void simulate()
 		{
 			if (actionSlot.onCooldown)
 			{
-				std::cout << "cd timer:" << actionSlot.boundAction.attackTimer.coolDownTimer<< "\n";
-				std::cout << "delta: " << deltaTime << "\n";
+				processAction(actionSlot.boundAction);
+				//std::cout << "cd timer:" << actionSlot.boundAction.attackTimer.coolDownTimer<< "\n";
+				//std::cout << "delta: " << deltaTime << "\n";
 				actionSlot.boundAction.attackTimer.coolDownTimer += deltaTime;
-				if (actionSlot.boundAction.attackTimer.coolDownTimer >= actionSlot.boundAction.attackTimer.totalCoolDown)
+				if (actionSlot.boundAction.attackTimer.coolDownTimer > actionSlot.boundAction.attackTimer.totalCoolDown)
 				{
 					actionSlot.boundAction.attackTimer.coolDownTimer = 0.0f;
 					actionSlot.onCooldown = false;
 				}
 				if (actionSlot.boundAction.actionStaticType == ACTION_DYNAMIC)
 				{
-					processAction(actionSlot.boundAction);
+
 				}
 			}
 		}
@@ -122,6 +124,7 @@ void mainGameLoop()
 		//std::cout << mPos.x << " " << mPos.y << " normalized:  " << normalized.x << normalized.y<< "\n";
 	}
 
+	checkActionRenderStatus(actionBar);
 	//drawSprite(SPRITE_DOOR, Vec2{ 50.0f,50.0f });
 	drawSprite(SPRITE_FROG, player.pos);
 	drawSprite(SPRITE_MOB_GOBLIN, gobo.position);
@@ -161,4 +164,16 @@ void updateMousePos()
 
 	mPos.x = (xPos - (winWidth / 2)) / (winWidth / renderData->gameCamera.dimensions.x) + camera.position.x;
 	mPos.y = -(yPos - winHeight / 2) / (winHeight / renderData->gameCamera.dimensions.y) + camera.position.y;
+}
+
+void checkActionRenderStatus(ActionBar& ActionBar)
+{
+	for (ActionBarSlot& actionSlot : actionBar.actions)
+	{
+		AttackTimer attackTimer = actionSlot.boundAction.attackTimer;
+		if (actionSlot.onCooldown && attackTimer.renderTime > attackTimer.coolDownTimer)
+		{
+			attackRenderQueue.push_back(actionSlot.boundAction.actionID);
+		}
+	}
 }
