@@ -1,11 +1,14 @@
 #version 430 core
 out vec4 FragColor;
+
 uniform vec3 arcColor;
 uniform float slamFadeDuration;
 uniform float arcFadeDuration;
 uniform float currentTime;
 uniform int attackFlag;
 uniform float slamDuration;
+
+//how far from original position
 
 #ifndef PI
 #define PI 3.141592653589793
@@ -16,10 +19,10 @@ float bounceOut(float t);
 
 void main()
 {
-    switch (attackFlag)
+/*    switch (attackFlag)
     {
         case 0:
-        float alpha = 1-(currentTime / arcFadeDuration);
+        float alpha = 0.9-(currentTime / arcFadeDuration);
         FragColor = vec4(arcColor, alpha);
         break;
     
@@ -27,7 +30,12 @@ void main()
         float alphaSlam = slamDuration / slamFadeDuration;
         FragColor = vec4(arcColor, alphaSlam);
         break;
-    }
+
+    case 2:
+        FragColor = vec4(arcColor, 1);
+        break;
+    }*/
+    FragColor = vec4(arcColor, 1.0);
 }
 
 

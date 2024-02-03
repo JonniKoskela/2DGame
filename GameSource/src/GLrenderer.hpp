@@ -24,7 +24,7 @@ const char* TEXTURE_PATH = "assets/textureAtlas.png";
 bool glInit(BumpAllocator* bump)
 {
     GLenum error{};
-
+	attackTransforms.reserve(1000);
     if (!compileShaders(bump))
     {
         std::cerr << "failed to compile shaders" << "\n";
@@ -58,11 +58,17 @@ bool glInit(BumpAllocator* bump)
 
         stbi_image_free(data);
     }
-
+	glUseProgram(shaderProgram);
     glGenBuffers(1, &transformSBO);
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, transformSBO);
     glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(Transform) * renderData->transforms.capacity(), renderData->transforms.data(), GL_DYNAMIC_DRAW);
 
+	glUseProgram(arcShader);
+	glGenBuffers(1, &attackTransformsSBO);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, attackTransformsSBO);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(attackRenderData4xVec2) * attackTransforms.capacity(), attackTransforms.data(), GL_DYNAMIC_DRAW);
+
+	glUseProgram(shaderProgram);
     {
         orthoID = glGetUniformLocation(shaderProgram, "orthoProjection");
         screenSizeID = glGetUniformLocation(shaderProgram, "screenSize");
@@ -77,7 +83,6 @@ bool glInit(BumpAllocator* bump)
     {
         std::cout << "GLERROR c: " << error << "\n";
     }
-		glGenBuffers(1, &slamVBO);
     orthoID = glGetUniformLocation(shaderProgram, "orthoProjection");
     Matrix4f orthoProjection = orthographicProjection( 0, screenSize.x, 0, -screenSize.y );
     glUniformMatrix4fv(orthoID, 1, GL_FALSE, &orthoProjection.data[0][0]);
@@ -88,11 +93,9 @@ bool glInit(BumpAllocator* bump)
         std::cout << "GLERROR a: " << error << "\n";
     }
 	{
-		glUseProgram(shaderProgram);
 
 		compileArcShaders(bump);
 		glUseProgram(arcShader);
-
 		glUniform3f(glGetUniformLocation(arcShader, "arcColor"), 1.0f, 1.0f, 1.0f);
 		arcShaderProjection = glGetUniformLocation(arcShader, "orthoProjection");
 		currentTimeLocation = glGetUniformLocation(arcShader, "currentTime");
@@ -100,6 +103,8 @@ bool glInit(BumpAllocator* bump)
 		attackFlagLocation = glGetUniformLocation(arcShader, "attackFlag");
 		slamDurationLocation = glGetUniformLocation(arcShader, "slamDuration");
 		arcFadeDurationLocation = glGetUniformLocation(arcShader, "arcFadeDuration");
+		rotationMatrixLocation = glGetUniformLocation(arcShader, "rotationMatrix");
+		
 
 
 		error = glGetError();
@@ -112,6 +117,7 @@ bool glInit(BumpAllocator* bump)
 	//generate arc buffer
 	glGenBuffers(1, &slamVBO);
 	glGenBuffers(1, &arcVBO);
+	glGenBuffers(1, &movingArcVBO);
     glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     return true;
@@ -121,16 +127,17 @@ bool glInit(BumpAllocator* bump)
 
 
 void openGLRender()
-{
+{		
 		GLenum error{};
 		OrtographicCamera camera = renderData->gameCamera;
-		GLuint rotationMatrixLocation{};
 
 		Matrix4f orthoProjection = orthographicProjection(
 			camera.position.x - camera.dimensions.x / 2.0f,
 			camera.position.x + camera.dimensions.x / 2.0f,
 			camera.position.y + camera.dimensions.y / 2.0f,
 			camera.position.y - camera.dimensions.y / 2.0f);
+
+
 
 	{
 		glUseProgram(shaderProgram);
@@ -146,27 +153,33 @@ void openGLRender()
 		glUniform2fv(screenSizeID, 1, &screenSize.x);
 		glUniformMatrix4fv(orthoID, 1, GL_FALSE, &orthoProjection.data[0][0]);
 		{
+			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, transformSBO);
 			glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, sizeof(Transform) * renderData->transforms.capacity(), renderData->transforms.data());
 			glDrawArraysInstanced(GL_TRIANGLES, 0, 6, renderData->transforms.size());
 			error = glGetError();
 			if (error)
 			{
-				std::cout << "GLERROR l2: " << error << "\n";
+				std::cout << "GLERROR l3: " << error << "\n";
 			}
 
 			renderData->transforms.clear();
 		}
-	}
-
-	{
-		glUseProgram(arcShader);
-		glUniformMatrix4fv(arcShaderProjection, 1, GL_FALSE, &orthoProjection.data[0][0]);
-		if (attackRenderQueue.size() != 0)
+		if (attackTransforms.size() > 0)
 		{
-			renderAttacks(attackRenderQueue);
+			glUseProgram(arcShader);
+			glBindBuffer(GL_SHADER_STORAGE_BUFFER, attackTransformsSBO);
+			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, attackTransformsSBO);
+			glUniformMatrix4fv(arcShaderProjection, 1, GL_FALSE, &orthoProjection.data[0][0]);
+			glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, sizeof(attackRenderData4xVec2) * attackTransforms.capacity(), attackTransforms.data());
+			glDrawArraysInstanced(GL_TRIANGLES, 0, 6, attackTransforms.size());
+			error = glGetError();
+			if (error)
+			{
+				std::cout << "GLERROR attack: " << error << "\n";
+			}
+			attackTransforms.clear();
 		}
 	}
-
 	error = glGetError();
 	if(error)
 	{
@@ -178,11 +191,13 @@ void openGLRender()
 
 void renderArc() {
 	//std::cout << arcTimer << "\n";
-
+	glUseProgram(arcShader);
+	//Matrix4f rotationMatrix = makeRotationMatrix(2);
+	//glUniformMatrix4fv(rotationMatrixLocation, 1, GL_FALSE, &rotationMatrix.data[0][0]);
 	glUniform1i(attackFlagLocation, 0);
 	glBindBuffer(GL_ARRAY_BUFFER, arcVBO);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(attackVertex), 0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vec2), 0);
 
 	glDrawArrays(GL_TRIANGLE_FAN, 0, arcVertexCapacity);
 	glDisableVertexAttribArray(0);
@@ -199,7 +214,7 @@ void renderSlam()
 	glUniform1i(attackFlagLocation, 1);
 	glBindBuffer(GL_ARRAY_BUFFER, slamVBO);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(attackVertex), 0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vec2), 0);
 	glDrawArrays(GL_QUADS, 0, 4);
 	glDisableVertexAttribArray(0);
 	error = glGetError();

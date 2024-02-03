@@ -9,11 +9,13 @@ Action loadAction(ActionID id);
 void startAttack(int actionID);
 //void startArcAttack();
 //void startSlamAttack();
-void processAttack_dynamic(Action& action);
-void processAttack_static(Action& action);
-void processAttack(Action& action);
-void processSlam(Action& action);
-void processArc(Action& action);
+void processAttack_dynamic(Action& action, bool renderer);
+void processAttack_static(Action& action, bool renderer);
+void processAttack(Action& action, bool renderer);
+void processSlam(Action& action, bool renderer);
+void processArc(Action& action, bool renderer);
+void processMovingArc(Action& action, bool renderer);
+
 
 void ActionBarSlot::bindActionBarSlot(Action action)
 {
@@ -58,58 +60,68 @@ Action loadAction(ActionID id)
 			a.actionStaticType = ACTION_STATIC;
 			a.actionID = id;
 			break;
+
 		case SLAM_ATTACK:
 			a.actionStaticType = ACTION_DYNAMIC;
 			a.actionID = id;
 			break;
+		case MOVING_ARC_ATTACK:
+			a.actionStaticType = ACTION_STATIC;
+			a.actionID = id;
 		}
 	}
 	std::cout << "loaded attack" << "\n";
 	return a;
 }
 
-void processAction(Action& action)
+void updateActionState(Action& action, bool renderer)
 {
 	switch (action.actionType)
 	{
 	case ACTION_ATTACK:
 		if (action.actionStaticType == ACTION_STATIC)
 		{
-			processAttack_static(action);
+			processAttack_static(action, renderer);
 		}
 		if (action.actionStaticType == ACTION_DYNAMIC)
 		{
-			processAttack_dynamic(action);
+			processAttack_dynamic(action, renderer);
 		}
 	}
 }
 
-void processAttack(Action& action)
-{
-	switch (action.actionID)
-	{
-	case SLAM_ATTACK:
-		processSlam(action);
-		break;
-	case ARC_ATTACK:
-		processArc(action);
-	}
-}
+//void processAttack(Action& action, bool renderer)
+//{
+//	switch (action.actionID)
+//	{
+//	case SLAM_ATTACK:
+//		processSlam(action, bool renderer);
+//		break;
+//	case ARC_ATTACK:
+//		processArc(action, bool renderer);
+//	}
+//}
 
-void processAttack_static(Action& action)
+void processAttack_static(Action& action, bool renderer)
 {
 	switch (action.actionID)
 	{
 	case ARC_ATTACK:
-		processArc(action);
+		processArc(action, renderer);
+		break;
+
+	case MOVING_ARC_ATTACK:
+		processMovingArc(action,renderer);
+		break;
 	}
+
 }
-void processAttack_dynamic(Action& action)
+void processAttack_dynamic(Action& action, bool renderer)
 {
 	switch (action.actionID)
 	{
 	case SLAM_ATTACK:
-		processSlam(action);
+		processSlam(action, renderer);
 		break;
 	}
 }

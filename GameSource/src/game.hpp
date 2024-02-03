@@ -8,16 +8,15 @@
 #include "action/action.hpp"
 #include "action/attackActionStructs.h"
 #include "game.h"
-#include <math.h>
 #include "action/attackTimer.hpp"
 #include "GLrenderer_attackQueue.hpp"
 
-
+double getRenderTime();
 
 void simulate() 
 {
-	float runSpeed = 1.5f;
-	float runAccel = 15.0f;
+	float runSpeed = 2.0f;
+	float runAccel = 17.0f;
 	float runReduce = 7.0f;
 	float gravity = 3.0f;
 	bool yKeyDown = (pollAction(MOVE_DOWN, KEY_DOWN) == true || pollAction(MOVE_UP, KEY_DOWN) == true);
@@ -70,14 +69,15 @@ void simulate()
 		{
 			if (pollAction(ACTIONBAR_1, KEY_DOWN) == true && actionBar.actions[0].onCooldown == false)
 			{
-				processAction(actionBar.actions[0].boundAction);
 				actionBar.actions[0].onCooldown = true;
 			}
 			if (pollAction(ACTIONBAR_2, KEY_DOWN) == true && actionBar.actions[1].onCooldown == false)
 			{
-				
-				processAction(actionBar.actions[1].boundAction);
 				actionBar.actions[1].onCooldown = true;
+			}
+			if (pollAction(ACTIONBAR_3, KEY_DOWN) == true && actionBar.actions[2].onCooldown == false)
+			{
+				actionBar.actions[2].onCooldown = true;
 			}
 		}
 	}
@@ -87,7 +87,7 @@ void simulate()
 		{
 			if (actionSlot.onCooldown)
 			{
-				processAction(actionSlot.boundAction);
+				updateActionState(actionSlot.boundAction,false);
 				//std::cout << "cd timer:" << actionSlot.boundAction.attackTimer.coolDownTimer<< "\n";
 				//std::cout << "delta: " << deltaTime << "\n";
 				actionSlot.boundAction.attackTimer.coolDownTimer += deltaTime;
@@ -95,10 +95,6 @@ void simulate()
 				{
 					actionSlot.boundAction.attackTimer.coolDownTimer = 0.0f;
 					actionSlot.onCooldown = false;
-				}
-				if (actionSlot.boundAction.actionStaticType == ACTION_DYNAMIC)
-				{
-
 				}
 			}
 		}
@@ -112,7 +108,9 @@ void simulate()
 
 void mainGameLoop() 
 {
-	getDT();
+
+
+	deltaTime += getTime();
 	if (deltaTime >= DELTA)
 	{
 		// update current physical state of mapped keys. done by glfw
@@ -123,8 +121,8 @@ void mainGameLoop()
 		deltaTime -= DELTA;
 		//std::cout << mPos.x << " " << mPos.y << " normalized:  " << normalized.x << normalized.y<< "\n";
 	}
-
-	checkActionRenderStatus(actionBar);
+	renderTimer = getRenderTime();
+	updateActionRenderState(renderTimer);
 	//drawSprite(SPRITE_DOOR, Vec2{ 50.0f,50.0f });
 	drawSprite(SPRITE_FROG, player.pos);
 	drawSprite(SPRITE_MOB_GOBLIN, gobo.position);
@@ -145,15 +143,30 @@ void setupGame()
 	actionBar.actions[0].active = true;
 	actionBar.actions[1].bindActionBarSlot(loadAction(SLAM_ATTACK));
 	actionBar.actions[1].active = true;
+	actionBar.actions[2].bindActionBarSlot(loadAction(MOVING_ARC_ATTACK));
+	actionBar.actions[2].active = true;
+
 }
 
-void getDT() 
+double getTime() 
 {
+	static auto previousTime = Clock::now();
+	static auto currentTime = Clock::now();
 	currentTime = Clock::now();
-	Duration dt = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - previousTime);
+	Duration dt = std::chrono::duration_cast<std::chrono::microseconds>(currentTime - previousTime);
 
 	previousTime = currentTime;
-	deltaTime += dt.count();
+	return dt.count();
+}
+double getRenderTime()
+{
+	static auto previousRenderTime = Clock::now();
+	static auto currentRenderTime = Clock::now();
+	currentRenderTime = Clock::now();
+	Duration dt = std::chrono::duration_cast<std::chrono::microseconds>(currentRenderTime - previousRenderTime);
+
+	previousRenderTime = currentRenderTime;
+	return dt.count();
 }
 
 void updateMousePos()
@@ -166,14 +179,14 @@ void updateMousePos()
 	mPos.y = -(yPos - winHeight / 2) / (winHeight / renderData->gameCamera.dimensions.y) + camera.position.y;
 }
 
-void checkActionRenderStatus(ActionBar& ActionBar)
+
+void updateActionRenderState(double renderTimer)
 {
-	for (ActionBarSlot& actionSlot : actionBar.actions)
+	for (ActionBarSlot& abs : actionBar.actions)
 	{
-		AttackTimer attackTimer = actionSlot.boundAction.attackTimer;
-		if (actionSlot.onCooldown && attackTimer.renderTime > attackTimer.coolDownTimer)
+		if (abs.onCooldown)
 		{
-			attackRenderQueue.push_back(actionSlot.boundAction.actionID);
+			updateActionState(abs.boundAction, true);
 		}
 	}
 }

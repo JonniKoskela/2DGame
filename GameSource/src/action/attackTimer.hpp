@@ -16,6 +16,15 @@ AttackTimer loadTimerProperties(Action& action)
 			attackTimer.fadeTime = 1.0f;
 			attackTimer.totalCoolDown = 3.0f;
 			break;
+
+		case MOVING_ARC_ATTACK:
+		{
+			attackTimer.renderTime = 0.6f;
+			//attackTimer.fadeTime = 0.0f;
+			attackTimer.activeTime = 0.1f;
+			attackTimer.totalCoolDown = 1.1f;
+			attackTimer.backSwingTime = 0.4f;
+		}
 		
 		}
 		return attackTimer;
@@ -32,6 +41,7 @@ AttackTimer loadTimerProperties(Action& action)
 			attackTimer.fadeTime = 2.0f;
 			attackTimer.totalCoolDown = 3.0f;
 		}
+
 		}
 		return attackTimer;
 	}

@@ -163,7 +163,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\include;$(SolutionDir)Dependencies\glm\glm;$(SolutionDir)Dependencies\GLAD\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp14</LanguageStandard>
       <DisableSpecificWarnings>4996</DisableSpecificWarnings>
-      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -224,7 +224,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\include;$(SolutionDir)Dependencies\glm\glm;$(SolutionDir)Dependencies\GLAD\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp14</LanguageStandard>
       <DisableSpecificWarnings>4996</DisableSpecificWarnings>
-      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -247,10 +247,12 @@
     <ClInclude Include="src\action\action.h" />
     <ClInclude Include="src\action\attackTimer.h" />
     <ClInclude Include="src\action\attackTimer.hpp" />
+    <ClInclude Include="src\easing.hpp" />
     <ClInclude Include="src\game.h" />
     <ClInclude Include="src\GLrenderer.h" />
     <ClInclude Include="src\camera.h" />
     <ClInclude Include="src\GLrenderer_attackQueue.hpp" />
+    <ClInclude Include="src\GLRenderer_attackRenderData.h" />
     <ClInclude Include="src\itemInterface.h" />
     <ClInclude Include="src\mobs.h" />
     <ClInclude Include="src\input.h" />

@@ -9,11 +9,11 @@ enum MOB_ID
 class Mob
 {
 public:
-	int health;
-	int damage;
-	Vec2 speed;
-	Vec2 position;
-	Vec2 size;
+	int health{};
+	int damage{};
+	Vec2 speed{};
+	Vec2 position{};
+	Vec2 size{};
 
 };
 

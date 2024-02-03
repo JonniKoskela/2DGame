@@ -14,8 +14,8 @@
 //----cpp----
 
 
-constexpr float winWidth = 960.0f;
-constexpr float winHeight = 540.0f;
+float winWidth = 960.0f;
+float winHeight = 540.0f;
 
 //----------------
 

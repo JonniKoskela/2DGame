@@ -1,6 +1,7 @@
 #pragma once
 #include "ACTION_ENUM.H"
 #include "attackTimer.h"
+#include "../GLRenderer_attackRenderData.h"
 class Action
 {
 public:
@@ -9,7 +10,7 @@ public:
 	ActionID actionID = ACTIONID_EMPTY;
 	int actionStaticType{ 0 };
 	AttackTimer attackTimer{};
-
+	attackRenderData4xVec2* currentVertices = nullptr;
 	Action() = default;
 };
 

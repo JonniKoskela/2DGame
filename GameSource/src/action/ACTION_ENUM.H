@@ -9,7 +9,8 @@ enum ActionID
 {
 	ACTIONID_EMPTY = 0,
 	ARC_ATTACK = 51,
-	SLAM_ATTACK = 52,
+	SLAM_ATTACK,
+	MOVING_ARC_ATTACK
 };
 enum ActionType
 {

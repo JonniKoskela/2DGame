@@ -9,8 +9,8 @@
 constexpr int KEYCOUNT = 1;
 
 extern GLFWwindow* window;
-extern const float winHeight;
-extern const float winWidth;
+extern float winHeight;
+extern float winWidth;
 
 
 
@@ -69,4 +69,5 @@ void initializeInputs() {
 	gameState.keyMappings[MOVE_LEFT].keys[0] = Key(GLFW_KEY_A);
 	gameState.keyMappings[ACTIONBAR_1].keys[0] = Key(GLFW_KEY_1);
 	gameState.keyMappings[ACTIONBAR_2].keys[0] = Key(GLFW_KEY_2);
+	gameState.keyMappings[ACTIONBAR_3].keys[0] = Key(GLFW_KEY_3);
 }

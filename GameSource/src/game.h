@@ -6,19 +6,21 @@
 using Duration = std::chrono::duration<float>;
 using Clock = std::chrono::steady_clock;
 
-auto previousTime = Clock::now();
-auto currentTime = Clock::now();
-constexpr float DELTA = (float)1 / 60;
+
+
+constexpr double DELTA = (float)1 / 60;
 static Mob gobo;
 static ActionBar actionBar{};
 
 
-static float deltaTime = 0.0f;
+static double deltaTime = 0.0;
+static double renderTimer{ 0 };
 
-void getDT();
+double getTime();
 void setupGame();
 Vec2 toWorldCoordinates(Vec2 position);
 void updateMousePos();
+void updateActionRenderState(double renderTimer);
 
 void checkActionRenderStatus(ActionBar&);
 //void startArcAttack();

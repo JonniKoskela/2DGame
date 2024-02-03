@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include "glm.hpp"
+#include "math.h"
 
 constexpr long double MPI = 3.14159265358979323851;
 
@@ -9,6 +10,149 @@ constexpr long double MPI = 3.14159265358979323851;
 	return degrees * MPI / 180.0;
 }*/
 
+class Matrix2f
+{
+public:
+	float data[2][2];
+
+	// Constructor to initialize the matrix to identity
+	Matrix2f()
+	{
+		for (int i = 0; i < 2; ++i)
+			for (int j = 0; j < 2; ++j)
+				data[i][j] = (i == j) ? 1.0f : 0.0f;
+	}
+
+	// Function to set the value at a specific row and column
+	void set(int row, int col, float value)
+	{
+		data[row][col] = value;
+	}
+
+	// Function to rotate the matrix by a given angle (in radians)
+	void rotate(float angle)
+	{
+		float cosTheta = cos(angle);
+		float sinTheta = sin(angle);
+
+		Matrix2f rotationMatrix;
+		rotationMatrix.set(0, 0, cosTheta);
+		rotationMatrix.set(0, 1, -sinTheta);
+		rotationMatrix.set(1, 0, sinTheta);
+		rotationMatrix.set(1, 1, cosTheta);
+
+		// Multiply the current matrix by the rotation matrix
+		*this *= rotationMatrix;
+	}
+
+	// Function to scale the matrix by a given factor in both dimensions
+	void scale(float scaleX, float scaleY)
+	{
+		Matrix2f scaleMatrix;
+		scaleMatrix.set(2, 0, scaleX);
+		scaleMatrix.set(2, 1, scaleY);
+
+		// Multiply the current matrix by the scale matrix
+		*this *= scaleMatrix;
+	}
+
+	// Function to translate the matrix by a given offset in both dimensions
+	void translate(float translateX, float translateY)
+	{
+		Matrix2f translationMatrix;
+		translationMatrix.set(0, 0, translateX);
+		translationMatrix.set(1, 1, translateY);
+
+		// Multiply the current matrix by the translation matrix
+		*this *= translationMatrix;
+	}
+
+	// Overload the * operator for matrix multiplication
+	Matrix2f operator*(const Matrix2f& other) const
+	{
+		Matrix2f result;
+		for (int i = 0; i < 2; ++i)
+			for (int j = 0; j < 2; ++j)
+				result.data[i][j] = data[i][0] * other.data[0][j] + data[i][1] * other.data[1][j];
+		return result;
+	}
+
+	// Overload the *= operator for in-place matrix multiplication
+	Matrix2f& operator*=(const Matrix2f& other)
+	{
+		*this = *this * other;
+		return *this;
+	}
+};
+class Matrix3f
+{
+public:
+	float data[3][3]{};
+
+	// Constructor to initialize the matrix to identity
+	Matrix3f()
+	{
+		for (int i = 0; i < 3; ++i)
+			for (int j = 0; j < 3; ++j)
+				data[i][j] = (i == j) ? 1.0f : 0.0f;
+	}
+
+	void reset()
+	{
+		for (int i = 0; i < 3; ++i)
+			for (int j = 0; j < 3; ++j)
+				this->data[i][j] = (i == j) ? 1.0f : 0.0f;
+	}
+
+	// Function to set the value at a specific row and column
+	void set(int row, int col, float value)
+	{
+		data[row][col] = value;
+	}
+
+	// Function to rotate the matrix around the Z-axis by a given angle (in radians)
+	void rotate(float angle)
+	{
+		float cosTheta = cos(angle);
+		float sinTheta = sin(angle);
+
+		Matrix3f rotationMatrix;
+		rotationMatrix.set(0, 0, cosTheta);
+		rotationMatrix.set(0, 1, sinTheta);
+		rotationMatrix.set(1, 0, -sinTheta);
+		rotationMatrix.set(1, 1, cosTheta);
+
+		// Multiply the current matrix by the rotation matrix
+		*this *= rotationMatrix;
+	}
+
+	// Function to translate the matrix by given offsets in x and y
+	void translate(float translateX, float translateY)
+	{
+		Matrix3f matrix{};
+		matrix.data[2][0] = translateX;
+		matrix.data[2][1] = translateY;
+		
+		*this *= matrix;
+	}
+
+	// Overload the * operator for matrix multiplication
+	Matrix3f operator*(const Matrix3f& other) const
+	{
+		Matrix3f result;
+		for (int i = 0; i < 3; ++i)
+			for (int j = 0; j < 3; ++j)
+				result.data[i][j] = data[i][0] * other.data[0][j] + data[i][1] * other.data[1][j] + data[i][2] * other.data[2][j];
+		return result;
+	}
+
+	// Overload the *= operator for in-place matrix multiplication
+	Matrix3f& operator*=(const Matrix3f& other)
+	{
+		*this = *this * other;
+		return *this;
+	}
+};
 
 //------------------------------------VECTORS
 struct Vec4 
@@ -45,6 +189,20 @@ struct Vec2
 	{
 		return { x + other.x, y + other.y };
 	}
+	Vec2 operator*(const Matrix2f& matrix) const
+	{
+		Vec2 result;
+		result.x = x * matrix.data[0][0] + y * matrix.data[1][0];
+		result.y = x * matrix.data[0][1] + y * matrix.data[1][1];
+		return result;
+	}
+	Vec2 operator*(const Matrix3f& matrix) const
+	{
+		Vec2 result;
+		result.x = x * matrix.data[0][0] + y * matrix.data[1][0] + matrix.data[2][0];
+		result.y = x * matrix.data[0][1] + y * matrix.data[1][1] + matrix.data[2][1];
+		return result;
+	}
 };
 std::ostream& operator<<(std::ostream& os, const Vec2& vec)
 {
@@ -72,9 +230,16 @@ Vec2 vec_2(iVec2 vec)
 }
 
 
+Vec2 transform_rotate(Vec2 vec, float angle)
+{
+	Vec2 rotated;
+	return rotated;
+}
 
-
-
+//Vec2 transform_translate(Vec2& vec, int x, int y)
+//{
+//
+//}
 
 
 
@@ -122,7 +287,6 @@ float w, x, y, z;
 public:
 Quaternionf(float qw, float qx, float qy, float qz) : w(qw), x(qx), y(qy), z(qz) {}
 
-// Method to convert the quaternion to a rotation matrix
 Matrix4f toMatrix() const
 {
 	Matrix4f rotationMatrix;
@@ -190,6 +354,23 @@ Matrix4f orthographicProjection(float left, float right, float top, float bottom
 
 	return resultMat;
 }
+Matrix4f makeRotationMatrix(float angle)
+{
+	Matrix4f resultMat;
+
+	float cosTheta = cos(angle);
+	float sinTheta = sin(angle);
+
+	resultMat.data[0][0] = cosTheta;
+	resultMat.data[0][1] = -sinTheta;
+	resultMat.data[1][0] = sinTheta;
+	resultMat.data[1][1] = cosTheta;
+
+	resultMat.data[2][2] = 1.0f;
+	resultMat.data[3][3] = 1.0f;
+
+	return resultMat;
+}
 
 class sprite2D
 {
@@ -217,7 +398,7 @@ Vec2 normalizeTo(Vec2& playerPos, Vec2& mousePos)
 
 float lerp(float a, float b, float t)
 {
-	return a + (b - a) * t;
+	return a + t * (b - a);
 }
 
 float approach(float current, float target, float increase)

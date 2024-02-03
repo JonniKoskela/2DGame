@@ -12,4 +12,6 @@ public:
 	float dynamic_attackMaxTime{};
 	float totalCoolDown{};
 	float coolDownTimer{};
+	float activeTime{};
+	float backSwingTime{};
 };

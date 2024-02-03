@@ -18,6 +18,7 @@ enum GameInputType
 	SHIFT,
 	ACTIONBAR_1,
 	ACTIONBAR_2,
+	ACTIONBAR_3,
 	GAME_INPUT_COUNT
 };
 
