@@ -153,7 +153,7 @@ void processMovingArc(Action& action, bool renderer)
 
 			float armRotation = easing::easeOutCirc((action.attackTimer.coolDownTimer + renderTimer) / action.attackTimer.activeTime);
 			float handleRotation = easing::easeInExpo((action.attackTimer.coolDownTimer + renderTimer) / (action.attackTimer.activeTime+ action.attackTimer.backSwingTime));
-			//float handleRotation = 0;
+			
 			std::cout << "armrotation: " << action.attackTimer.coolDownTimer / action.attackTimer.renderTime << "\n";
 			vertices = generateMovingArcVertices(player.pos, angle, armRotation, handleRotation);
 			action.currentVertices = &vertices;
@@ -179,7 +179,7 @@ attackRenderData4xVec2 generateMovingArcVertices(Vec2& originPoint, float mAngle
 		vert = vert * transform;
 		vert = vert + originPoint;
 	}
-	maVertices.rotateAroundHandle(handleRotation*0.6f);
+	maVertices.rotateAroundHandle(handleRotation*1.0f);
 	std::cout << "renderTimer: " << renderTimer << "\n";
 
 	return maVertices;

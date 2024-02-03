@@ -22,6 +22,7 @@ Vec2 toWorldCoordinates(Vec2 position);
 void updateMousePos();
 void updateActionRenderState(double renderTimer);
 
+void lerpPlayerPosition();
 void checkActionRenderStatus(ActionBar&);
 //void startArcAttack();
 bool arcHitDetection(float AttackAngle);
@@ -36,6 +37,7 @@ class Player
 {
 public:
 	Vec2 pos{};
+	Vec2 renderPos{};
 	Vec2 speed{};
 	bool attacking { false };
 	bool moving { false };

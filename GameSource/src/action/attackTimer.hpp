@@ -19,11 +19,12 @@ AttackTimer loadTimerProperties(Action& action)
 
 		case MOVING_ARC_ATTACK:
 		{
-			attackTimer.renderTime = 0.6f;
+
 			//attackTimer.fadeTime = 0.0f;
-			attackTimer.activeTime = 0.1f;
+			attackTimer.activeTime = 0.08f;
 			attackTimer.totalCoolDown = 1.1f;
 			attackTimer.backSwingTime = 0.4f;
+			attackTimer.renderTime = attackTimer.backSwingTime + attackTimer.activeTime;
 		}
 		
 		}

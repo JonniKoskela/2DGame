@@ -3,6 +3,11 @@
 uniform mat4 orthoProjection;
 out int renderDataAttackFlag;
 
+layout (location = 0) uniform sampler2D textureAtlas;
+
+layout (location = 0) out vec2 textureCoordsOut;
+
+
 struct attackRenderData4xVec2
 {
 	int attackFlag;

@@ -24,11 +24,13 @@ void simulate()
 
 	if (xKeyDown)
 	{
-		runAccel /= 1.7f;
+		runAccel /= 1.6f;
+		runSpeed *= 0.77f;
 	}
 	if (yKeyDown)
 	{
-		runAccel /= 1.7f;
+		runAccel /= 1.6f;
+		runSpeed *= 0.77f;
 	}
 
 	//calculate new speed for player
@@ -119,14 +121,16 @@ void mainGameLoop()
 		// calculate speed, movement, cooldowns, start attacks...
 		simulate();
 		deltaTime -= DELTA;
+		renderTimer -= DELTA;
 		//std::cout << mPos.x << " " << mPos.y << " normalized:  " << normalized.x << normalized.y<< "\n";
 	}
-	renderTimer = getRenderTime();
+	renderTimer += getRenderTime();
 	updateActionRenderState(renderTimer);
+	lerpPlayerPosition();
 	//drawSprite(SPRITE_DOOR, Vec2{ 50.0f,50.0f });
-	drawSprite(SPRITE_FROG, player.pos);
+	drawSprite(SPRITE_FROG, player.renderPos);
 	drawSprite(SPRITE_MOB_GOBLIN, gobo.position);
-	renderData->gameCamera.position = player.pos;
+	renderData->gameCamera.position = player.renderPos;
 }
 
 
@@ -188,5 +192,13 @@ void updateActionRenderState(double renderTimer)
 		{
 			updateActionState(abs.boundAction, true);
 		}
+	}
+}
+
+void lerpPlayerPosition()
+{
+	{
+		player.renderPos.x = player.pos.x + (player.speed.x*(renderTimer/DELTA));
+		player.renderPos.y = player.pos.y + (player.speed.y * (renderTimer / DELTA));
 	}
 }
