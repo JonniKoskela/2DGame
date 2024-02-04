@@ -3,6 +3,7 @@
 #include <string>
 #include "glm.hpp"
 #include "math.h"
+#include <chrono>
 
 constexpr long double MPI = 3.14159265358979323851;
 
@@ -218,6 +219,14 @@ struct iVec2
 	{
 		return { x - other.x, y - other.y };
 	}
+	iVec2 operator+ (iVec2 other)
+	{
+		return { x + other.x, y + other.y };
+	}
+	iVec2 operator* (int scalar)
+	{
+		return{ x * scalar, y * scalar };
+	}
 };
 std::ostream& operator<<(std::ostream& os, const iVec2& vec)
 {
@@ -423,6 +432,32 @@ float distanceBetween(Vec2 posA, Vec2 posB)
 	float distanceX = abs(posA.x - posB.x);
 	float distanceY = abs(posA.y - posB.y);
 	return sqrt(distanceX * distanceX + distanceY * distanceY);
+}
+
+void getFPS(float interval)
+{
+	using Duration = std::chrono::duration<float>;
+	using Clock = std::chrono::steady_clock;
+
+	static auto previousFPSTime = Clock::now();
+	static auto currentFPSTime = Clock::now();
+	static double acc;
+	static int ticks;
+	
+	currentFPSTime = Clock::now();
+	Duration dt = std::chrono::duration_cast<std::chrono::microseconds>(currentFPSTime - previousFPSTime);
+
+	previousFPSTime = currentFPSTime;
+
+	++ticks;
+	acc += dt.count();
+	
+	if (acc > interval)
+	{
+		std::cout << ticks << "\n";
+		acc = 0;
+		ticks = 0;
+	}
 }
 
 //float getMilliseconds()

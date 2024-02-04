@@ -92,10 +92,10 @@ void simulate()
 				updateActionState(actionSlot.boundAction,false);
 				//std::cout << "cd timer:" << actionSlot.boundAction.attackTimer.coolDownTimer<< "\n";
 				//std::cout << "delta: " << deltaTime << "\n";
-				actionSlot.boundAction.attackTimer.coolDownTimer += deltaTime;
-				if (actionSlot.boundAction.attackTimer.coolDownTimer > actionSlot.boundAction.attackTimer.totalCoolDown)
+				actionSlot.boundAction.actionTimer.coolDownTimer += deltaTime;
+				if (actionSlot.boundAction.actionTimer.coolDownTimer > actionSlot.boundAction.actionTimer.totalCoolDown)
 				{
-					actionSlot.boundAction.attackTimer.coolDownTimer = 0.0f;
+					actionSlot.boundAction.actionTimer.coolDownTimer = 0.0f;
 					actionSlot.onCooldown = false;
 				}
 			}
@@ -115,15 +115,16 @@ void mainGameLoop()
 	deltaTime += getTime();
 	if (deltaTime >= DELTA)
 	{
+		updateMousePos();
 		// update current physical state of mapped keys. done by glfw
 		updateKeyState();
-		updateMousePos();
 		// calculate speed, movement, cooldowns, start attacks...
 		simulate();
 		deltaTime -= DELTA;
 		renderTimer -= DELTA;
 		//std::cout << mPos.x << " " << mPos.y << " normalized:  " << normalized.x << normalized.y<< "\n";
 	}
+
 	renderTimer += getRenderTime();
 	updateActionRenderState(renderTimer);
 	lerpPlayerPosition();
@@ -131,6 +132,7 @@ void mainGameLoop()
 	drawSprite(SPRITE_FROG, player.renderPos);
 	drawSprite(SPRITE_MOB_GOBLIN, gobo.position);
 	renderData->gameCamera.position = player.renderPos;
+	getFPS(1.0f);
 }
 
 
@@ -138,7 +140,7 @@ void mainGameLoop()
 void setupGame() 
 {
 	player.pos = { 50.0f, 50.0f };
-	renderData->gameCamera.dimensions = { 480.0f,270.0f };
+	renderData->gameCamera.dimensions = { 640.0f,360.0f };
 	renderData->gameCamera.position = { 0.0f, 0.0f };
 	gobo = createMob(MOB_GOBLIN);
 	gobo.position = { 100.0f, 100.0f };

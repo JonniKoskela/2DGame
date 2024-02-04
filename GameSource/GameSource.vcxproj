@@ -241,12 +241,17 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\action\action.hpp" />
+    <ClInclude Include="src\action\actionDrawData.h" />
+    <ClInclude Include="src\action\actionDrawData.hpp" />
     <ClInclude Include="src\action\ACTION_ENUM.H" />
     <ClInclude Include="src\action\attackActionStructs.h" />
+    <ClInclude Include="src\action\attackProperties.h" />
+    <ClInclude Include="src\action\attackProperties.hpp" />
     <ClInclude Include="src\action\attacks.hpp" />
     <ClInclude Include="src\action\action.h" />
     <ClInclude Include="src\action\attackTimer.h" />
     <ClInclude Include="src\action\attackTimer.hpp" />
+    <ClInclude Include="src\animationInterFace.h" />
     <ClInclude Include="src\easing.hpp" />
     <ClInclude Include="src\game.h" />
     <ClInclude Include="src\GLrenderer.h" />

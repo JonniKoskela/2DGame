@@ -2,16 +2,26 @@
 #include "ACTION_ENUM.H"
 #include "attackTimer.h"
 #include "../GLRenderer_attackRenderData.h"
+#include "attackProperties.h"
+#include "actionDrawData.h"
 class Action
 {
 public:
 	int inPhase{ 0 };
 	int actionType = ACTION_EMPTY;
 	ActionID actionID = ACTIONID_EMPTY;
+
 	int actionStaticType{ 0 };
-	AttackTimer attackTimer{};
+	
+	DrawData drawData;
+	ActionTimer actionTimer{};
+	AttackProperties* attackProperties = nullptr;
 	attackRenderData4xVec2* currentVertices = nullptr;
 	Action() = default;
+	~Action()
+	{
+		std::cout << "Action Deleted" << "\n";
+	}
 };
 
 class ActionBarSlot

@@ -1,14 +1,42 @@
 #version 430 core
-out vec4 FragColor;
 
-uniform vec3 arcColor;
-uniform float slamFadeDuration;
-uniform float arcFadeDuration;
-uniform float currentTime;
-uniform int attackFlag;
-uniform float slamDuration;
 
+in flat int renderDataAttackFlag;
+layout (location = 0) in vec2 textureCoordsIn;
+layout (location = 0) out vec4 FragColor;
+layout (location = 0) uniform sampler2D textureAtlas;
 //how far from original position
+
+// attackflag = :
+//      0. primitive
+//      1. animated with texture
+
+
+
+void main()
+{
+    switch (renderDataAttackFlag)
+    {
+        case 0:
+        FragColor = vec4(1.0,1.0,1.0,1.0);
+        break;
+    
+        case 1:
+        vec4 textureColor = texelFetch(textureAtlas, ivec2(textureCoordsIn), 0);
+	
+	    if(textureColor.a == 0)
+	    {
+		    discard; 
+	    }
+
+	    FragColor = textureColor;
+        break;
+
+/*        default:
+        FragColor = vec4(0.0,0.0,0.0,1.0);
+        break;*/
+    }
+}
 
 #ifndef PI
 #define PI 3.141592653589793
@@ -16,29 +44,6 @@ uniform float slamDuration;
 
 float circularInOut(float t);
 float bounceOut(float t);
-
-void main()
-{
-/*    switch (attackFlag)
-    {
-        case 0:
-        float alpha = 0.9-(currentTime / arcFadeDuration);
-        FragColor = vec4(arcColor, alpha);
-        break;
-    
-    case 1:
-        float alphaSlam = slamDuration / slamFadeDuration;
-        FragColor = vec4(arcColor, alphaSlam);
-        break;
-
-    case 2:
-        FragColor = vec4(arcColor, 1);
-        break;
-    }*/
-    FragColor = vec4(arcColor, 1.0);
-}
-
-
 
 float circularInOut(float t) {
   return t < 0.5

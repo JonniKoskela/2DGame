@@ -4,7 +4,7 @@
 #include <assert.h>
 
 //AttackTimer 
-class AttackTimer
+class ActionTimer
 {
 public:
 	float renderTime{};

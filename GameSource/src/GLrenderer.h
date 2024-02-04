@@ -14,7 +14,10 @@ GLuint orthoID{};
 GLuint screenSizeID{};
 GLuint transformSBO{};
 GLuint shaderProgram{};
+
 GLuint texture{};
+GLuint arcShaderTexture{};
+
 GLuint objectTypeID{};
 
 GLuint arcVBO{};

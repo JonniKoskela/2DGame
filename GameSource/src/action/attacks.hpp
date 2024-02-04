@@ -6,11 +6,12 @@
 #include "../GLRenderer_attackRenderData.h"
 #include "algorithm"
 #include "../easing.hpp"
+#include "animationInterface.h"
 
 std::vector<Vec2> generateSlamVertices(Vec2& pos, float mAngle, float range, float slamTimer);
 std::vector<Vec2> generateArcVertices(Vec2&, float, float);
-attackRenderData4xVec2 generateMovingArcVertices(Vec2& pos, float mAngle, float armRotation, float handleRotation);
-
+attackRenderData4xVec2 generateMovingArcSwing(Vec2& pos, float mAngle, float armRotation, float handleRotation);
+attackRenderData4xVec2 generateMovingArcAttackAnim(Vec2 const& playerPos, float mAngle, Action& action, bool init);
 bool arcHitDetection(float AttackAngle);
 //--------------------------------------------------------------------------ARC
 
@@ -18,8 +19,8 @@ bool arcHitDetection(float AttackAngle);
 
 void processArc(Action& action, bool renderer)
 {
-	float arcTimer = action.attackTimer.coolDownTimer;
-	if (arcTimer < action.attackTimer.renderTime)
+	float arcTimer = action.actionTimer.coolDownTimer;
+	if (arcTimer < action.actionTimer.renderTime)
 	{
 	static std::vector<Vec2> arcVertices{};
 
@@ -79,11 +80,11 @@ bool arcHitDetection(float AttackAngle)
 //-----------------------------------------------------------------------SLAM
 void processSlam(Action& action,bool renderer)
 {
-	float slamTimer = action.attackTimer.coolDownTimer;
+	float slamTimer = action.actionTimer.coolDownTimer;
 	std::cout << slamTimer << "\n";
 	Vec2 normalizedmPos = normalizeTo(player.pos, mPos);
 	float angle = atan2f(normalizedmPos.x, normalizedmPos.y);
-	if (slamTimer < action.attackTimer.dynamic_attackMaxTime)
+	if (slamTimer < action.actionTimer.dynamic_attackMaxTime)
 	{
 		std::vector<Vec2> slamVertices = generateSlamVertices(player.pos, angle, 30.0f, slamTimer);
 		slamRenderData(slamVertices, slamTimer, player.pos);
@@ -138,51 +139,113 @@ struct movingArcData
 };
 void processMovingArc(Action& action, bool renderer)
 {
-	static attackRenderData4xVec2 vertices{};
+	attackRenderData4xVec2 weaponAnimationVertices{};
+	weaponAnimationVertices.attackFlag = 0;
+	static attackRenderData4xVec2 flyingArcVertices{};
 	static bool init{false};
 	static float angle;
+
 	if (!init)
 	{
-		init = true;
 		Vec2 normalizedmPos = normalizeTo(player.pos, mPos);
 		angle = atan2f(normalizedmPos.x, normalizedmPos.y);
+		flyingArcVertices = generateMovingArcAttackAnim(player.pos, angle, action, 0);
+		init = true;
 	}
 	if (renderer){
-		if (action.attackTimer.coolDownTimer <= action.attackTimer.renderTime)
+		if (action.actionTimer.coolDownTimer+renderTimer <= action.actionTimer.renderTime)
 		{
+			// attack projectile
+			{
+				flyingArcVertices = generateMovingArcAttackAnim(player.pos,angle,action, 1);
+				int animationIdx = animate(action.actionTimer.coolDownTimer + renderTimer, action.drawData.frameCount, action.actionTimer.renderTime);
+				push_animationFrame(animationIdx, action.drawData.animation_atlasPosition, action.drawData.animation_atlasSize, flyingArcVertices);
 
-			float armRotation = easing::easeOutCirc((action.attackTimer.coolDownTimer + renderTimer) / action.attackTimer.activeTime);
-			float handleRotation = easing::easeInExpo((action.attackTimer.coolDownTimer + renderTimer) / (action.attackTimer.activeTime+ action.attackTimer.backSwingTime));
-			
-			std::cout << "armrotation: " << action.attackTimer.coolDownTimer / action.attackTimer.renderTime << "\n";
-			vertices = generateMovingArcVertices(player.pos, angle, armRotation, handleRotation);
-			action.currentVertices = &vertices;
-			attackTransforms.push_back(vertices);
+			}
+			//attack swing
+			{
+				float handleRotation = easing::easeInExpo((action.actionTimer.coolDownTimer + renderTimer) / (action.actionTimer.activeTime + action.actionTimer.backSwingTime));
+				float armRotation = easing::easeOutCirc((action.actionTimer.coolDownTimer + renderTimer) / action.actionTimer.activeTime);
+				std::cout << "armrotation: " << action.actionTimer.coolDownTimer / action.actionTimer.renderTime << "\n";
+				weaponAnimationVertices = generateMovingArcSwing(player.pos, angle, armRotation, handleRotation);
+				action.currentVertices = &weaponAnimationVertices;
+				attackTransforms.push_back(weaponAnimationVertices);
+			}
 		}
 		else init = false;
 	}
 }
-attackRenderData4xVec2 generateMovingArcVertices(Vec2& originPoint, float mAngle, float armRotation, float handleRotation)
+attackRenderData4xVec2 generateMovingArcSwing(Vec2& originPoint, float mAngle, float armRotation, float handleRotation)
 {
-	float width = 13.0f;
+	//VAIHDA TÄN NIMEKSI "weapon_ANIMATE_SWIPE()" tjsp koska sitä se on...
+	float width = 11.0f;
 	attackRenderData4xVec2 maVertices{};
 	maVertices.vertices[0] = { 0.0f, -(width/2) };
 	maVertices.vertices[1] = { 0.0f, (width/2) };
-	maVertices.vertices[2] = { 35.0f, (width/2) };
-	maVertices.vertices[3] = { 35.0f, -(width/2) };
+	maVertices.vertices[2] = { 25.0f, (width/2) };
+	maVertices.vertices[3] = { 25.0f, -(width/2) };
 
 	Matrix3f transform{};
 	transform.translate(20.0f, 15.0f);
-	transform.rotate(-mAngle+(1.1f*MPI+armRotation));
+	transform.rotate(-mAngle+(1.15f*MPI+armRotation));
 	for (auto& vert : maVertices.vertices)
 	{
 		vert = vert * transform;
 		vert = vert + originPoint;
 	}
-	maVertices.rotateAroundHandle(handleRotation*1.0f);
+	maVertices.rotateAroundHandle(handleRotation*1.1f);
 	std::cout << "renderTimer: " << renderTimer << "\n";
 
 	return maVertices;
+}
+
+attackRenderData4xVec2 generateMovingArcAttackAnim(Vec2 const& playerPos,float mAngle, Action& action, bool init)
+{
+	float currentPhase = action.actionTimer.coolDownTimer+renderTimer / action.actionTimer.renderTime;
+	constexpr float mouseOffset = 0.5 * MPI;
+	attackRenderData4xVec2 verticesContainer{};
+	static std::array<Vec2, 4> startVertices;
+	static std::array<Vec2, 4> endVertices;
+	if (!init)
+	{
+		float width = action.attackProperties->width;
+		float attackRange = action.attackProperties->range;
+
+		startVertices = 
+		{
+			Vec2{0.0f,-width/2},
+			Vec2{0.0f, width/2},
+			Vec2{10.0f, width/2},
+			Vec2{10.0f, -width/2}
+		};
+		endVertices = 
+		{
+		Vec2{attackRange,-width / 2},
+		Vec2{attackRange, width / 2},
+		Vec2{10.0f + attackRange, width / 2},
+		Vec2{10.0f + attackRange, -width / 2}
+		};
+
+		Matrix3f transform{};
+		transform.rotate(-mAngle-mouseOffset);
+		for (int i = 0;i<4;++i)
+		{
+			//startVertices[i] = startVertices[i] + player.pos;
+			//endVertices[i] = endVertices[i] + player.pos;
+			startVertices[i] = startVertices[i] * transform;
+			endVertices[i] = endVertices[i] * transform;
+		}
+	}
+	else
+	{
+		for (int i = 0; i < 4; ++i)
+		{
+			verticesContainer.vertices[i].x = lerp(startVertices[i].x, endVertices[i].x, currentPhase) + player.pos.x;
+			verticesContainer.vertices[i].y = lerp(startVertices[i].y, endVertices[i].y, currentPhase) + player.pos.y;
+		}
+	}
+
+	return verticesContainer;
 }
 
 

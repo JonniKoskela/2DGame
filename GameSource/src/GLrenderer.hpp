@@ -13,7 +13,7 @@
 #include "game.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
-static Vec2 screenSize{ 960.0f, 540.0f };
+static Vec2 screenSize{ 1280.0f,720.0f };
 const char* TEXTURE_PATH = "assets/textureAtlas.png";
 
 
@@ -29,7 +29,33 @@ bool glInit(BumpAllocator* bump)
     {
         std::cerr << "failed to compile shaders" << "\n";
     }
+	error = glGetError();
+	if (error)
+	{
+		std::cout << "GLERROR a: " << error << "\n";
+	}
+	//compile attackShader and get uniforms
+	{
 
+		compileArcShaders(bump);
+		glUseProgram(arcShader);
+		glUniform3f(glGetUniformLocation(arcShader, "arcColor"), 1.0f, 1.0f, 1.0f);
+		arcShaderProjection = glGetUniformLocation(arcShader, "orthoProjection");
+		currentTimeLocation = glGetUniformLocation(arcShader, "currentTime");
+		slamFadeDurationLocation = glGetUniformLocation(arcShader, "slamFadeDuration");
+		attackFlagLocation = glGetUniformLocation(arcShader, "attackFlag");
+		slamDurationLocation = glGetUniformLocation(arcShader, "slamDuration");
+		arcFadeDurationLocation = glGetUniformLocation(arcShader, "arcFadeDuration");
+		rotationMatrixLocation = glGetUniformLocation(arcShader, "rotationMatrix");
+
+
+
+		error = glGetError();
+		if (error)
+		{
+			std::cout << "GLERROR arc: " << error << "\n";
+		}
+	}
     GLuint VAO{};
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
@@ -39,24 +65,40 @@ bool glInit(BumpAllocator* bump)
     {
         std::cout << "GLERROR b: " << error << "\n";
     }
+	
     {
         int width, height, channels;
         char* data = (char*)stbi_load(TEXTURE_PATH, &width, &height, &channels, 4);
         assert(data && "stbi_load failure");
 
-        glGenTextures(1, &texture);
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture);
+		{
+			glUseProgram(shaderProgram);
+			glGenTextures(1, &texture);
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, texture);
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 3);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 3);
 
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB8_ALPHA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB8_ALPHA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		}
+		{
+			glUseProgram(arcShader);
+			glGenTextures(1, &arcShaderTexture);
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, arcShaderTexture);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 3);
 
-        stbi_image_free(data);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB8_ALPHA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		}
+		stbi_image_free(data);
     }
 	glUseProgram(shaderProgram);
     glGenBuffers(1, &transformSBO);
@@ -73,7 +115,7 @@ bool glInit(BumpAllocator* bump)
         orthoID = glGetUniformLocation(shaderProgram, "orthoProjection");
         screenSizeID = glGetUniformLocation(shaderProgram, "screenSize");
     }
-
+	glUseProgram(arcShader);
     glEnable(GL_FRAMEBUFFER_SRGB);
     glDisable(0x809D);
     glDepthFunc(GL_GREATER);
@@ -87,32 +129,7 @@ bool glInit(BumpAllocator* bump)
     Matrix4f orthoProjection = orthographicProjection( 0, screenSize.x, 0, -screenSize.y );
     glUniformMatrix4fv(orthoID, 1, GL_FALSE, &orthoProjection.data[0][0]);
 
-    error = glGetError();
-    if (error)
-    {
-        std::cout << "GLERROR a: " << error << "\n";
-    }
-	{
 
-		compileArcShaders(bump);
-		glUseProgram(arcShader);
-		glUniform3f(glGetUniformLocation(arcShader, "arcColor"), 1.0f, 1.0f, 1.0f);
-		arcShaderProjection = glGetUniformLocation(arcShader, "orthoProjection");
-		currentTimeLocation = glGetUniformLocation(arcShader, "currentTime");
-		slamFadeDurationLocation = glGetUniformLocation(arcShader, "slamFadeDuration");
-		attackFlagLocation = glGetUniformLocation(arcShader, "attackFlag");
-		slamDurationLocation = glGetUniformLocation(arcShader, "slamDuration");
-		arcFadeDurationLocation = glGetUniformLocation(arcShader, "arcFadeDuration");
-		rotationMatrixLocation = glGetUniformLocation(arcShader, "rotationMatrix");
-		
-
-
-		error = glGetError();
-		if (error)
-		{
-			std::cout << "GLERROR arc: " << error << "\n";
-		}
-	}
 
 	//generate arc buffer
 	glGenBuffers(1, &slamVBO);

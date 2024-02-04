@@ -3,6 +3,8 @@
 #include <chrono>
 #include "action.h"
 #include "attackTimer.hpp"
+#include "attackProperties.hpp"
+#include "actionDrawData.hpp"
 
 
 Action loadAction(ActionID id);
@@ -24,7 +26,7 @@ void ActionBarSlot::bindActionBarSlot(Action action)
 	this->boundAction.actionStaticType = action.actionStaticType;
 	this->active = true;
 	this->boundAction.actionID = action.actionID;
-	this->boundAction.attackTimer = loadTimerProperties(action);
+	this->boundAction.actionTimer = loadAttackTimer(action);
 }
 
 //void ActionBarSlot::startAction()
@@ -51,8 +53,11 @@ void ActionBarSlot::bindActionBarSlot(Action action)
 Action loadAction(ActionID id)
 {
 	Action a{};
-	if(id > 50)
+
+	a.drawData = loadDrawData(id);
+	if(id >= 50)
 	{
+		a.attackProperties = loadAttackProperties(id);
 		a.actionType = ACTION_ATTACK;
 		switch (id)
 		{
@@ -72,6 +77,11 @@ Action loadAction(ActionID id)
 	}
 	std::cout << "loaded attack" << "\n";
 	return a;
+
+	if (id < 50)
+	{
+
+	}
 }
 
 void updateActionState(Action& action, bool renderer)

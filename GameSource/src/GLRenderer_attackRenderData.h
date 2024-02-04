@@ -7,12 +7,15 @@
 #define GLSL_float alignas(4) float
 
 #define GLSL_vec2 alignas(8) Vec2
+#define GLSL_ivec2 alignas(8) iVec2
 
 
 struct attackRenderData4xVec2
 {
 	GLSL_int attackFlag{};
 	GLSL_vec2 vertices[4]{};
+	GLSL_ivec2 textureAtlasPosition{};
+	GLSL_ivec2 textureAtlasOffset{};
 
 	attackRenderData4xVec2& operator*(const Matrix3f& transform)
 	{

@@ -14,8 +14,8 @@
 //----cpp----
 
 
-float winWidth = 960.0f;
-float winHeight = 540.0f;
+float winWidth = 1280.0f;
+float winHeight = 720.0f;
 
 //----------------
 
