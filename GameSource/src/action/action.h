@@ -16,7 +16,7 @@ public:
 	DrawData drawData;
 	ActionTimer actionTimer{};
 	AttackProperties* attackProperties = nullptr;
-	attackRenderData4xVec2* currentVertices = nullptr;
+	RenderData4xVec2* currentVertices = nullptr;
 	Action() = default;
 	~Action()
 	{

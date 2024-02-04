@@ -10,7 +10,7 @@ void renderArc();
 void renderSlam();
 
 
-void drawAttack(attackRenderData4xVec2* data)
+void drawAttack(RenderData4xVec2* data)
 {
 	attackTransforms.push_back(*data);
 

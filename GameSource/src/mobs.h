@@ -14,7 +14,6 @@ public:
 	Vec2 speed{};
 	Vec2 position{};
 	Vec2 size{};
-
 };
 
 Mob createMob(MOB_ID mobId, Vec2 position = {0.0f,0.0f})

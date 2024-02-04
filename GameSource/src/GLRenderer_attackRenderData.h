@@ -10,14 +10,16 @@
 #define GLSL_ivec2 alignas(8) iVec2
 
 
-struct attackRenderData4xVec2
+class RenderData4xVec2
 {
+public:
 	GLSL_int attackFlag{};
 	GLSL_vec2 vertices[4]{};
 	GLSL_ivec2 textureAtlasPosition{};
 	GLSL_ivec2 textureAtlasOffset{};
 
-	attackRenderData4xVec2& operator*(const Matrix3f& transform)
+	RenderData4xVec2() = default;
+	RenderData4xVec2& operator*(const Matrix3f& transform)
 	{
 		for (size_t i = 0; i < 4; ++i)
 		{
@@ -54,4 +56,4 @@ struct attackRenderData4xVec2
 };
 
 
-static std::vector<attackRenderData4xVec2> attackTransforms{};
+static std::vector<RenderData4xVec2> attackTransforms{};

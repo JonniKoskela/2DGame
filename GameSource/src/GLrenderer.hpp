@@ -108,7 +108,7 @@ bool glInit(BumpAllocator* bump)
 	glUseProgram(arcShader);
 	glGenBuffers(1, &attackTransformsSBO);
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, attackTransformsSBO);
-    glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(attackRenderData4xVec2) * attackTransforms.capacity(), attackTransforms.data(), GL_DYNAMIC_DRAW);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(RenderData4xVec2) * attackTransforms.capacity(), attackTransforms.data(), GL_DYNAMIC_DRAW);
 
 	glUseProgram(shaderProgram);
     {
@@ -187,7 +187,7 @@ void openGLRender()
 			glBindBuffer(GL_SHADER_STORAGE_BUFFER, attackTransformsSBO);
 			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, attackTransformsSBO);
 			glUniformMatrix4fv(arcShaderProjection, 1, GL_FALSE, &orthoProjection.data[0][0]);
-			glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, sizeof(attackRenderData4xVec2) * attackTransforms.capacity(), attackTransforms.data());
+			glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, sizeof(RenderData4xVec2) * attackTransforms.capacity(), attackTransforms.data());
 			glDrawArraysInstanced(GL_TRIANGLES, 0, 6, attackTransforms.size());
 			error = glGetError();
 			if (error)

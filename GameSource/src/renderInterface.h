@@ -3,7 +3,9 @@
 #include "fileUtils.h"
 #include "utils.h"
 #include "assets.h"
-
+#include "equipment/equipmentSet.h"
+#include "GLRenderer_attackRenderData.h"
+#include "player.h"
 struct Transform {
 	Vec2 size{ 0 };
 	Vec2 pos{ 0 };
@@ -66,6 +68,14 @@ void drawSprite(SpriteID spriteID, iVec2 pos)
 	drawSprite(spriteID, vec_2(pos));
 }
 
+void drawPlayerEquipment(const Player& player)
+{
+	if (player.equipment.ContainsWeapon)
+	{
+		RenderData4xVec2 weaponRenderData;
+		
+	}
+}
 
 
  //void drawAttack(AttackID attackID, Vec2 pos)

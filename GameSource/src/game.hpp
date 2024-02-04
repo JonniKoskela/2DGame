@@ -11,6 +11,8 @@
 #include "action/attackTimer.hpp"
 #include "GLrenderer_attackQueue.hpp"
 
+
+
 double getRenderTime();
 
 void simulate() 
@@ -19,6 +21,7 @@ void simulate()
 	float runAccel = 17.0f;
 	float runReduce = 7.0f;
 	float gravity = 3.0f;
+
 	bool yKeyDown = (pollAction(MOVE_DOWN, KEY_DOWN) == true || pollAction(MOVE_UP, KEY_DOWN) == true);
 	bool xKeyDown = (pollAction(MOVE_RIGHT, KEY_DOWN) == true || pollAction(MOVE_LEFT, KEY_DOWN) == true);
 
@@ -124,13 +127,13 @@ void mainGameLoop()
 		renderTimer -= DELTA;
 		//std::cout << mPos.x << " " << mPos.y << " normalized:  " << normalized.x << normalized.y<< "\n";
 	}
-
 	renderTimer += getRenderTime();
 	updateActionRenderState(renderTimer);
 	lerpPlayerPosition();
 	//drawSprite(SPRITE_DOOR, Vec2{ 50.0f,50.0f });
 	drawSprite(SPRITE_FROG, player.renderPos);
 	drawSprite(SPRITE_MOB_GOBLIN, gobo.position);
+	drawPlayerEquipment(player);
 	renderData->gameCamera.position = player.renderPos;
 	getFPS(1.0f);
 }
@@ -152,6 +155,7 @@ void setupGame()
 	actionBar.actions[2].bindActionBarSlot(loadAction(MOVING_ARC_ATTACK));
 	actionBar.actions[2].active = true;
 
+	player.equipment.equipWeapon(WEAPON_DAGGER_IRON);
 }
 
 double getTime() 

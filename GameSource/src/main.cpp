@@ -22,7 +22,6 @@ float winHeight = 720.0f;
 GLFWwindow* window;
 BumpAllocator bump{};
 
-
 int main(void)
 {
     bump = makeBumpAllocator(MB(20));

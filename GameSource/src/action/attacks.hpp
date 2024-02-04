@@ -10,8 +10,8 @@
 
 std::vector<Vec2> generateSlamVertices(Vec2& pos, float mAngle, float range, float slamTimer);
 std::vector<Vec2> generateArcVertices(Vec2&, float, float);
-attackRenderData4xVec2 generateMovingArcSwing(Vec2& pos, float mAngle, float armRotation, float handleRotation);
-attackRenderData4xVec2 generateMovingArcAttackAnim(Vec2 const& playerPos, float mAngle, Action& action, bool init);
+RenderData4xVec2 generateMovingArcSwing(Vec2& pos, float mAngle, float armRotation, float handleRotation);
+RenderData4xVec2 generateMovingArcAttackAnim(Vec2 const& playerPos, float mAngle, Action& action, bool init);
 bool arcHitDetection(float AttackAngle);
 //--------------------------------------------------------------------------ARC
 
@@ -131,17 +131,11 @@ std::vector<Vec2> generateSlamVertices(Vec2& pos, float mAngle, float range, flo
 	return vertices;
 }
 
-
-
-struct movingArcData
+void processMovingArc(Action& action,Player& player ,bool renderer)
 {
+	RenderData4xVec2 weaponAnimationVertices{};
 
-};
-void processMovingArc(Action& action, bool renderer)
-{
-	attackRenderData4xVec2 weaponAnimationVertices{};
-	weaponAnimationVertices.attackFlag = 0;
-	static attackRenderData4xVec2 flyingArcVertices{};
+	static RenderData4xVec2 flyingArcVertices{};
 	static bool init{false};
 	static float angle;
 
@@ -169,17 +163,24 @@ void processMovingArc(Action& action, bool renderer)
 				std::cout << "armrotation: " << action.actionTimer.coolDownTimer / action.actionTimer.renderTime << "\n";
 				weaponAnimationVertices = generateMovingArcSwing(player.pos, angle, armRotation, handleRotation);
 				action.currentVertices = &weaponAnimationVertices;
+					weaponAnimationVertices.attackFlag = 1;
+				weaponAnimationVertices.textureAtlasPosition = player.equipment.currentWeapon.weaponSprite.atlasOffset;
+				weaponAnimationVertices.textureAtlasOffset = player.equipment.currentWeapon.weaponSprite.size;
 				attackTransforms.push_back(weaponAnimationVertices);
 			}
 		}
 		else init = false;
 	}
 }
-attackRenderData4xVec2 generateMovingArcSwing(Vec2& originPoint, float mAngle, float armRotation, float handleRotation)
+//RenderData4xVec2 generateMovingArcSwing(Vec2& originPoint, float mAngle, float armRotation, float handleRotation)
+//{
+//
+//}
+RenderData4xVec2 generateMovingArcSwing(Vec2& originPoint, float mAngle, float armRotation, float handleRotation)
 {
 	//VAIHDA TÄN NIMEKSI "weapon_ANIMATE_SWIPE()" tjsp koska sitä se on...
 	float width = 11.0f;
-	attackRenderData4xVec2 maVertices{};
+	RenderData4xVec2 maVertices{};
 	maVertices.vertices[0] = { 0.0f, -(width/2) };
 	maVertices.vertices[1] = { 0.0f, (width/2) };
 	maVertices.vertices[2] = { 25.0f, (width/2) };
@@ -199,11 +200,11 @@ attackRenderData4xVec2 generateMovingArcSwing(Vec2& originPoint, float mAngle, f
 	return maVertices;
 }
 
-attackRenderData4xVec2 generateMovingArcAttackAnim(Vec2 const& playerPos,float mAngle, Action& action, bool init)
+RenderData4xVec2 generateMovingArcAttackAnim(Vec2 const& playerPos,float mAngle, Action& action, bool init)
 {
 	float currentPhase = action.actionTimer.coolDownTimer+renderTimer / action.actionTimer.renderTime;
 	constexpr float mouseOffset = 0.5 * MPI;
-	attackRenderData4xVec2 verticesContainer{};
+	RenderData4xVec2 verticesContainer{};
 	static std::array<Vec2, 4> startVertices;
 	static std::array<Vec2, 4> endVertices;
 	if (!init)

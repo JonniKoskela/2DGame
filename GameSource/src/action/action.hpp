@@ -16,7 +16,7 @@ void processAttack_static(Action& action, bool renderer);
 void processAttack(Action& action, bool renderer);
 void processSlam(Action& action, bool renderer);
 void processArc(Action& action, bool renderer);
-void processMovingArc(Action& action, bool renderer);
+void processMovingArc(Action& action,Player&, bool renderer);
 
 
 void ActionBarSlot::bindActionBarSlot(Action action)
@@ -121,7 +121,7 @@ void processAttack_static(Action& action, bool renderer)
 		break;
 
 	case MOVING_ARC_ATTACK:
-		processMovingArc(action,renderer);
+		processMovingArc(action,player,renderer);
 		break;
 	}
 

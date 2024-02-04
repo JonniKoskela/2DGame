@@ -253,6 +253,10 @@
     <ClInclude Include="src\action\attackTimer.hpp" />
     <ClInclude Include="src\animationInterFace.h" />
     <ClInclude Include="src\easing.hpp" />
+    <ClInclude Include="src\equipment\equipmentSet.h" />
+    <ClInclude Include="src\equipment\equipment_ENUM.h" />
+    <ClInclude Include="src\equipment\weapon.h" />
+    <ClInclude Include="src\equipment\WeaponStats.h" />
     <ClInclude Include="src\game.h" />
     <ClInclude Include="src\GLrenderer.h" />
     <ClInclude Include="src\camera.h" />
@@ -266,6 +270,7 @@
     <ClInclude Include="src\assets.h" />
     <ClInclude Include="src\game.hpp" />
     <ClInclude Include="src\GLrenderer.hpp" />
+    <ClInclude Include="src\player.h" />
     <ClInclude Include="src\renderInterface.h" />
     <ClInclude Include="src\stb\stb_image.h" />
     <ClInclude Include="src\utils.h" />

@@ -17,7 +17,7 @@ int animate(float timer,int frameCount, float duration)
 	return animationIdx;
 };
 
-void push_animationFrame(int frameIndex, iVec2& atlasPosition, iVec2& atlasSize,attackRenderData4xVec2& animContainer)
+void push_animationFrame(int frameIndex, iVec2& atlasPosition, iVec2& atlasSize,RenderData4xVec2& animContainer)
 {
 	
 	animContainer.attackFlag = 1;

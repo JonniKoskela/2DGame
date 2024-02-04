@@ -3,6 +3,7 @@
 #include "input.h"
 #include "action/action.h"
 #include "mobs.h"
+#include "player.h"
 using Duration = std::chrono::duration<float>;
 using Clock = std::chrono::steady_clock;
 
@@ -32,15 +33,4 @@ struct GameState
 	KeyMapping keyMappings[GAME_INPUT_COUNT];
 
 };
-
-class Player
-{
-public:
-	Vec2 pos{};
-	Vec2 renderPos{};
-	Vec2 speed{};
-	bool attacking { false };
-	bool moving { false };
-};
-static Player player{};
 static GameState gameState{};
