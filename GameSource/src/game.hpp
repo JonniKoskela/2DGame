@@ -10,11 +10,12 @@
 #include "game.h"
 #include "action/attackTimer.hpp"
 #include "GLrenderer_attackQueue.hpp"
+#include "fileutils.h"
 
 
 
 double getRenderTime();
-
+void updateEquipmentPosition();
 void simulate() 
 {
 	float runSpeed = 2.0f;
@@ -28,12 +29,12 @@ void simulate()
 	if (xKeyDown)
 	{
 		runAccel /= 1.6f;
-		runSpeed *= 0.77f;
+		runSpeed *= 0.71f;
 	}
 	if (yKeyDown)
 	{
 		runAccel /= 1.6f;
-		runSpeed *= 0.77f;
+		runSpeed *= 0.71f;
 	}
 
 	//calculate new speed for player
@@ -75,14 +76,17 @@ void simulate()
 			if (pollAction(ACTIONBAR_1, KEY_DOWN) == true && actionBar.actions[0].onCooldown == false)
 			{
 				actionBar.actions[0].onCooldown = true;
+				player.weaponRenderData.playerWeaponOnLeft = !player.weaponRenderData.playerWeaponOnLeft;
 			}
 			if (pollAction(ACTIONBAR_2, KEY_DOWN) == true && actionBar.actions[1].onCooldown == false)
 			{
 				actionBar.actions[1].onCooldown = true;
+				player.weaponRenderData.playerWeaponOnLeft = !player.weaponRenderData.playerWeaponOnLeft;
 			}
 			if (pollAction(ACTIONBAR_3, KEY_DOWN) == true && actionBar.actions[2].onCooldown == false)
 			{
 				actionBar.actions[2].onCooldown = true;
+				player.weaponRenderData.playerWeaponOnLeft = !player.weaponRenderData.playerWeaponOnLeft;
 			}
 		}
 	}
@@ -130,11 +134,15 @@ void mainGameLoop()
 	renderTimer += getRenderTime();
 	updateActionRenderState(renderTimer);
 	lerpPlayerPosition();
+	updateEquipmentPosition();
 	//drawSprite(SPRITE_DOOR, Vec2{ 50.0f,50.0f });
+
 	drawSprite(SPRITE_FROG, player.renderPos);
 	drawSprite(SPRITE_MOB_GOBLIN, gobo.position);
+
 	drawPlayerEquipment(player);
 	renderData->gameCamera.position = player.renderPos;
+
 	getFPS(1.0f);
 }
 
@@ -206,5 +214,17 @@ void lerpPlayerPosition()
 	{
 		player.renderPos.x = player.pos.x + (player.speed.x*(renderTimer/DELTA));
 		player.renderPos.y = player.pos.y + (player.speed.y * (renderTimer / DELTA));
+	}
+}
+
+void updateEquipmentPosition()
+{
+	if (player.equipment.ContainsWeapon)
+	{
+		Sprite wepSprite = player.equipment.currentWeapon.weaponSprite;
+
+		/*player.weaponRenderData.renderData = */
+		
+
 	}
 }

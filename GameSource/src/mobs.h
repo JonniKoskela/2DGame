@@ -9,8 +9,8 @@ enum MOB_ID
 class Mob
 {
 public:
-	int health{};
-	int damage{};
+	uint32_t health{};
+	uint32_t damage{};
 	Vec2 speed{};
 	Vec2 position{};
 	Vec2 size{};

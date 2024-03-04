@@ -4,10 +4,7 @@
 
 std::vector<ActionID> attackRenderQueue{};
 
-bool compileShaders(BumpAllocator* bump);
-bool compileArcShaders(BumpAllocator* bump);
-void renderArc();
-void renderSlam();
+
 
 
 void drawAttack(RenderData4xVec2* data)

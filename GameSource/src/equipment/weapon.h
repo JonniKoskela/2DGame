@@ -32,7 +32,7 @@ Sprite Weapon::getWeaponSprite(WeaponID id)
 	{
 	case WEAPON_DAGGER_IRON:
 		sprite.atlasOffset = { 0,32 };
-		sprite.size = { 5,16 };
+		sprite.size = {16,5 };
 
 		/*case WEAPON_SWORD_IRON:
 			...*/

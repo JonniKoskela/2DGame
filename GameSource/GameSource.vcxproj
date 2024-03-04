@@ -161,9 +161,10 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\include;$(SolutionDir)Dependencies\glm\glm;$(SolutionDir)Dependencies\GLAD\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp14</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
       <DisableSpecificWarnings>4996</DisableSpecificWarnings>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <Optimization>MinSpace</Optimization>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -222,9 +223,10 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\include;$(SolutionDir)Dependencies\glm\glm;$(SolutionDir)Dependencies\GLAD\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp14</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
       <DisableSpecificWarnings>4996</DisableSpecificWarnings>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <Optimization>MinSpace</Optimization>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -258,11 +260,16 @@
     <ClInclude Include="src\equipment\weapon.h" />
     <ClInclude Include="src\equipment\WeaponStats.h" />
     <ClInclude Include="src\game.h" />
+    <ClInclude Include="src\game_worldGrid.h" />
     <ClInclude Include="src\GLrenderer.h" />
     <ClInclude Include="src\camera.h" />
     <ClInclude Include="src\GLrenderer_attackQueue.hpp" />
     <ClInclude Include="src\GLRenderer_attackRenderData.h" />
     <ClInclude Include="src\itemInterface.h" />
+    <ClInclude Include="src\map\map.hpp" />
+    <ClInclude Include="src\map\mapEnum.h" />
+    <ClInclude Include="src\map\mapFilePaths.h" />
+    <ClInclude Include="src\map\mapMisc.h" />
     <ClInclude Include="src\mobs.h" />
     <ClInclude Include="src\input.h" />
     <ClInclude Include="src\input.hpp" />
@@ -281,6 +288,8 @@
   <ItemGroup>
     <None Include="assets\arc.frag" />
     <None Include="assets\arc.vert" />
+    <None Include="assets\mapShader.frag" />
+    <None Include="assets\mapShader.vert" />
     <None Include="assets\quad.frag" />
     <None Include="assets\quad.vert" />
   </ItemGroup>

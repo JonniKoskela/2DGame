@@ -14,7 +14,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
 static Vec2 screenSize{ 1280.0f,720.0f };
-const char* TEXTURE_PATH = "assets/textureAtlas.png";
+
 
 
 
@@ -73,9 +73,9 @@ bool glInit(BumpAllocator* bump)
 
 		{
 			glUseProgram(shaderProgram);
-			glGenTextures(1, &texture);
+			glGenTextures(1, &textureAtlas_01);
 			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, texture);
+			glBindTexture(GL_TEXTURE_2D, textureAtlas_01);
 
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
@@ -132,9 +132,6 @@ bool glInit(BumpAllocator* bump)
 
 
 	//generate arc buffer
-	glGenBuffers(1, &slamVBO);
-	glGenBuffers(1, &arcVBO);
-	glGenBuffers(1, &movingArcVBO);
     glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     return true;
@@ -203,44 +200,6 @@ void openGLRender()
 		std::cout << "GLERROR l1: " << error << "\n";
 	}
 }
-
-
-
-void renderArc() {
-	//std::cout << arcTimer << "\n";
-	glUseProgram(arcShader);
-	//Matrix4f rotationMatrix = makeRotationMatrix(2);
-	//glUniformMatrix4fv(rotationMatrixLocation, 1, GL_FALSE, &rotationMatrix.data[0][0]);
-	glUniform1i(attackFlagLocation, 0);
-	glBindBuffer(GL_ARRAY_BUFFER, arcVBO);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vec2), 0);
-
-	glDrawArrays(GL_TRIANGLE_FAN, 0, arcVertexCapacity);
-	glDisableVertexAttribArray(0);
-}
-
-void renderSlam()
-{
-	GLenum error = glGetError();
-	if (error)
-	{
-		std::cout << "GLERROR RENDERSLAM" << "\n";
-	}
-	//std::cout << arcTimer << "\n";
-	glUniform1i(attackFlagLocation, 1);
-	glBindBuffer(GL_ARRAY_BUFFER, slamVBO);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vec2), 0);
-	glDrawArrays(GL_QUADS, 0, 4);
-	glDisableVertexAttribArray(0);
-	error = glGetError();
-	if (error)
-	{
-		std::cout << "GLERROR RENDERSLAM" << "\n";
-	}
-}
-
 
 
 
@@ -414,4 +373,49 @@ bool compileArcShaders(BumpAllocator* bump)
 	glDeleteShader(fragShaderID);
 
 	return true;
+}
+
+void generateMapBuffer(BumpAllocator* bump)
+{
+
+
+	{
+		int width, height, channels;
+		char* data = (char*)stbi_load(TEXTURE_PATH, &width, &height, &channels, 4);
+		assert(data && "stbi_load failure");
+
+		{
+			glUseProgram(shaderProgram);
+			glGenTextures(1, &mapTextureFile);
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, textureAtlas_01);
+
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 3);
+
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB8_ALPHA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		}
+		{
+			glUseProgram(arcShader);
+			glGenTextures(1, &arcShaderTexture);
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, arcShaderTexture);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 3);
+
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB8_ALPHA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		}
+		stbi_image_free(data);
+	}
+	GLenum error = glGetError();
+	if (error)
+	{
+		std::cout << "GLERROR generating mapBuffer: " << error << "\n";
+	}
 }

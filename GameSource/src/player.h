@@ -15,7 +15,7 @@ enum PlayerCurrentActionStateID
 class WeaponRenderData
 {
 public:
-	WeaponDisplacement attackStance{WEAPON_DISPLACEMENT_LEFT};
+	bool playerWeaponOnLeft{ false };
 	RenderData4xVec2 renderData{};
 
 	WeaponRenderData() = default;

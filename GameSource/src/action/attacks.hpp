@@ -10,7 +10,7 @@
 
 std::vector<Vec2> generateSlamVertices(Vec2& pos, float mAngle, float range, float slamTimer);
 std::vector<Vec2> generateArcVertices(Vec2&, float, float);
-RenderData4xVec2 generateMovingArcSwing(Vec2& pos, float mAngle, float armRotation, float handleRotation);
+RenderData4xVec2 animateWeaponSwing(Vec2& pos, float mAngle, float armRotation, float handleRotation);
 RenderData4xVec2 generateMovingArcAttackAnim(Vec2 const& playerPos, float mAngle, Action& action, bool init);
 bool arcHitDetection(float AttackAngle);
 //--------------------------------------------------------------------------ARC
@@ -19,25 +19,25 @@ bool arcHitDetection(float AttackAngle);
 
 void processArc(Action& action, bool renderer)
 {
-	float arcTimer = action.actionTimer.coolDownTimer;
-	if (arcTimer < action.actionTimer.renderTime)
-	{
-	static std::vector<Vec2> arcVertices{};
+	//float arcTimer = action.actionTimer.coolDownTimer;
+	//if (arcTimer < action.actionTimer.renderTime)
+	//{
+	//static std::vector<Vec2> arcVertices{};
 
-		if (arcTimer == 0.0f)
-		{
-			Vec2 normalizedmPos = normalizeTo(player.pos, mPos);
-			float angle = atan2f(normalizedmPos.x, normalizedmPos.y);
-			arcVertices = generateArcVertices(player.pos, angle, 35.0f);
-			arcRenderData(arcVertices, arcTimer);
-		}
-		else
-		{
-			arcRenderData(arcVertices, arcTimer);
-		}
-	}
+	//	if (arcTimer == 0.0f)
+	//	{
+	//		Vec2 normalizedmPos = normalizeTo(player.pos, mPos);
+	//		float angle = atan2f(normalizedmPos.x, normalizedmPos.y);
+	//		arcVertices = generateArcVertices(player.pos, angle, 35.0f);
+	//		arcRenderData(arcVertices, arcTimer);
+	//	}
+	//	else
+	//	{
+	//		arcRenderData(arcVertices, arcTimer);
+	//	}
+	//}
 
-	return;
+	//return;
 }
 std::vector<Vec2> generateArcVertices(Vec2& pos, float mAngle, float distance)
 {
@@ -66,44 +66,44 @@ std::vector<Vec2> generateArcVertices(Vec2& pos, float mAngle, float distance)
 	return vertices;
 }
 
-bool arcHitDetection(float AttackAngle)
-{
-	Vec2 normalizedMonsterPos = normalizeTo(player.pos, gobo.position);
-	float monsterPlayerAngle = atan2f(normalizedMonsterPos.x, normalizedMonsterPos.y);
-	if (AttackAngle - 1 <= monsterPlayerAngle && AttackAngle + 1 >= monsterPlayerAngle && distanceBetween(gobo.position, player.pos) <= 85.0f)
-	{
-		return true;
-	}
-	return false;
-}
-
-//-----------------------------------------------------------------------SLAM
+//bool arcHitDetection(float AttackAngle)
+//{
+//	Vec2 normalizedMonsterPos = normalizeTo(player.pos, gobo.position);
+//	float monsterPlayerAngle = atan2f(normalizedMonsterPos.x, normalizedMonsterPos.y);
+//	if (AttackAngle - 1 <= monsterPlayerAngle && AttackAngle + 1 >= monsterPlayerAngle && distanceBetween(gobo.position, player.pos) <= 85.0f)
+//	{
+//		return true;
+//	}
+//	return false;
+//}
+//
+////-----------------------------------------------------------------------SLAM
 void processSlam(Action& action,bool renderer)
 {
-	float slamTimer = action.actionTimer.coolDownTimer;
-	std::cout << slamTimer << "\n";
-	Vec2 normalizedmPos = normalizeTo(player.pos, mPos);
-	float angle = atan2f(normalizedmPos.x, normalizedmPos.y);
-	if (slamTimer < action.actionTimer.dynamic_attackMaxTime)
-	{
-		std::vector<Vec2> slamVertices = generateSlamVertices(player.pos, angle, 30.0f, slamTimer);
-		slamRenderData(slamVertices, slamTimer, player.pos);
-		Matrix3f transform{};
-		transform.translate(50, 0);
-		transform.rotate(1);
-		for (Vec2& vertex : slamVertices)
-		{
-			vertex = vertex * transform;
-		}
-	}
-	else
-	{
-		renderSlamBool = false;
-	}
-	if (slamTimer > 0.2f)
-	{
-		std::cout << slamTimer << "\n";
-	}
+	//float slamTimer = action.actionTimer.coolDownTimer;
+	//std::cout << slamTimer << "\n";
+	//Vec2 normalizedmPos = normalizeTo(player.pos, mPos);
+	//float angle = atan2f(normalizedmPos.x, normalizedmPos.y);
+	//if (slamTimer < action.actionTimer.dynamic_attackMaxTime)
+	//{
+	//	std::vector<Vec2> slamVertices = generateSlamVertices(player.pos, angle, 30.0f, slamTimer);
+	//	slamRenderData(slamVertices, slamTimer, player.pos);
+	//	Matrix3f transform{};
+	//	transform.translate(50, 0);
+	//	transform.rotate(1);
+	//	for (Vec2& vertex : slamVertices)
+	//	{
+	//		vertex = vertex * transform;
+	//	}
+	//}
+	//else
+	//{
+	//	renderSlamBool = false;
+	//}
+	//if (slamTimer > 0.2f)
+	//{
+	//	std::cout << slamTimer << "\n";
+	//}
 	//else
 	//{
 	//	slamHitDetection();
@@ -111,24 +111,24 @@ void processSlam(Action& action,bool renderer)
 }
 std::vector<Vec2> generateSlamVertices(Vec2& pos, float mAngle, float range, float slamTimer)
 {
-	std::vector<Vec2> vertices{};
-	vertices.reserve(4);
-	float angle = mAngle + 0.5f * fPi;
-	float distance = 30.0f;
-	float width = 50.0f;
-	float endRange = distance + (range * slamTimer);
-	float innerAngle = tanf(width * 0.5f / distance);
-	float outerAngle = tanf(width * 0.5f / endRange);	
-	Matrix3f transform{};
-	transform.translate(100, 50);
-	transform.rotate(1);
+	//std::vector<Vec2> vertices{};
+	//vertices.reserve(4);
+	//float angle = mAngle + 0.5f * fPi;
+	//float distance = 30.0f;
+	//float width = 50.0f;
+	//float endRange = distance + (range * slamTimer);
+	//float innerAngle = tanf(width * 0.5f / distance);
+	//float outerAngle = tanf(width * 0.5f / endRange);	
+	//Matrix3f transform{};
+	//transform.translate(100, 50);
+	//transform.rotate(1);
 
-	vertices.push_back(Vec2{ pos.x + distance * cosf(angle - innerAngle), pos.y - distance * sinf(angle - innerAngle) });
-	vertices.push_back(Vec2{ pos.x + distance * cosf(angle + innerAngle), pos.y - distance * sinf(angle + innerAngle) });
-	vertices.push_back(Vec2{ pos.x+1 + endRange * cosf(angle + outerAngle), pos.y - endRange * sinf(angle + outerAngle) });
-	vertices.push_back(Vec2{ pos.x+1 + endRange * cosf(angle - outerAngle), pos.y - endRange * sinf(angle - outerAngle) });
+	//vertices.push_back(Vec2{ pos.x + distance * cosf(angle - innerAngle), pos.y - distance * sinf(angle - innerAngle) });
+	//vertices.push_back(Vec2{ pos.x + distance * cosf(angle + innerAngle), pos.y - distance * sinf(angle + innerAngle) });
+	//vertices.push_back(Vec2{ pos.x+1 + endRange * cosf(angle + outerAngle), pos.y - endRange * sinf(angle + outerAngle) });
+	//vertices.push_back(Vec2{ pos.x+1 + endRange * cosf(angle - outerAngle), pos.y - endRange * sinf(angle - outerAngle) });
 
-	return vertices;
+	//return vertices;
 }
 
 void processMovingArc(Action& action,Player& player ,bool renderer)
@@ -160,8 +160,8 @@ void processMovingArc(Action& action,Player& player ,bool renderer)
 			{
 				float handleRotation = easing::easeInExpo((action.actionTimer.coolDownTimer + renderTimer) / (action.actionTimer.activeTime + action.actionTimer.backSwingTime));
 				float armRotation = easing::easeOutCirc((action.actionTimer.coolDownTimer + renderTimer) / action.actionTimer.activeTime);
-				std::cout << "armrotation: " << action.actionTimer.coolDownTimer / action.actionTimer.renderTime << "\n";
-				weaponAnimationVertices = generateMovingArcSwing(player.pos, angle, armRotation, handleRotation);
+				//std::cout << "armrotation: " << action.actionTimer.coolDownTimer / action.actionTimer.renderTime << "\n";
+				weaponAnimationVertices = animateWeaponSwing(player.pos, angle, armRotation, handleRotation);
 				action.currentVertices = &weaponAnimationVertices;
 					weaponAnimationVertices.attackFlag = 1;
 				weaponAnimationVertices.textureAtlasPosition = player.equipment.currentWeapon.weaponSprite.atlasOffset;
@@ -169,33 +169,43 @@ void processMovingArc(Action& action,Player& player ,bool renderer)
 				attackTransforms.push_back(weaponAnimationVertices);
 			}
 		}
-		else init = false;
+		else
+		{
+			init = false;
+
+		}
 	}
 }
 //RenderData4xVec2 generateMovingArcSwing(Vec2& originPoint, float mAngle, float armRotation, float handleRotation)
 //{
 //
 //}
-RenderData4xVec2 generateMovingArcSwing(Vec2& originPoint, float mAngle, float armRotation, float handleRotation)
+RenderData4xVec2 animateWeaponSwing(Vec2& originPoint, float mAngle, float armRotation, float handleRotation)
 {
-	//VAIHDA TÄN NIMEKSI "weapon_ANIMATE_SWIPE()" tjsp koska sitä se on...
-	float width = 11.0f;
+	bool weaponOnLeft = player.weaponRenderData.playerWeaponOnLeft;
+	auto offset = weaponOnLeft == false ? Vec2{ 20.0f,5.0f } : Vec2{ -25.0f,5.0f };
+	float armRotationCalculated = weaponOnLeft == false ? -mAngle + (1.15f * MPI + armRotation) : -mAngle - (1.15f * MPI + armRotation);
+
+	float width = player.equipment.currentWeapon.weaponSprite.size.y;
 	RenderData4xVec2 maVertices{};
-	maVertices.vertices[0] = { 0.0f, -(width/2) };
+	maVertices.vertices[0] = { 0.0f };
 	maVertices.vertices[1] = { 0.0f, (width/2) };
-	maVertices.vertices[2] = { 25.0f, (width/2) };
-	maVertices.vertices[3] = { 25.0f, -(width/2) };
+	maVertices.vertices[2] = { 16.0f, (width/2) };
+	maVertices.vertices[3] = { 16.0f, -(width/2) };
 
 	Matrix3f transform{};
-	transform.translate(20.0f, 15.0f);
-	transform.rotate(-mAngle+(1.15f*MPI+armRotation));
+	transform.translate(offset.x,offset.y);
+	transform.rotate(armRotationCalculated);
+
 	for (auto& vert : maVertices.vertices)
 	{
 		vert = vert * transform;
 		vert = vert + originPoint;
 	}
-	maVertices.rotateAroundHandle(handleRotation*1.1f);
-	std::cout << "renderTimer: " << renderTimer << "\n";
+
+	float handleRotationCalc = weaponOnLeft == false ? handleRotation * 1.4f : -handleRotation+MPI * 1.4f;
+	maVertices.rotateAroundHandle(handleRotationCalc);
+	//std::cout << "renderTimer: " << renderTimer << "\n";
 
 	return maVertices;
 }
@@ -203,7 +213,7 @@ RenderData4xVec2 generateMovingArcSwing(Vec2& originPoint, float mAngle, float a
 RenderData4xVec2 generateMovingArcAttackAnim(Vec2 const& playerPos,float mAngle, Action& action, bool init)
 {
 	float currentPhase = action.actionTimer.coolDownTimer+renderTimer / action.actionTimer.renderTime;
-	constexpr float mouseOffset = 0.5 * MPI;
+	constexpr float mouseOffset = 0.5f * MPI;
 	RenderData4xVec2 verticesContainer{};
 	static std::array<Vec2, 4> startVertices;
 	static std::array<Vec2, 4> endVertices;

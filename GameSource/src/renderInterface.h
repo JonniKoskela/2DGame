@@ -70,11 +70,9 @@ void drawSprite(SpriteID spriteID, iVec2 pos)
 
 void drawPlayerEquipment(const Player& player)
 {
-	if (player.equipment.ContainsWeapon)
-	{
-		RenderData4xVec2 weaponRenderData;
-		
-	}
+	RenderData4xVec2 weaponDraw = player.weaponRenderData.renderData;
+	weaponDraw.attackFlag = 1;
+	attackTransforms.push_back(weaponDraw);
 }
 
 

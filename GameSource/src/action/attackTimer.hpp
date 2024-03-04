@@ -22,8 +22,8 @@ ActionTimer loadAttackTimer(Action& action)
 
 			//attackTimer.fadeTime = 0.0f;
 			attackTimer.activeTime = 0.1f;
-			attackTimer.totalCoolDown = 2.0f;
-			attackTimer.backSwingTime = 0.4f;
+			attackTimer.totalCoolDown = 0.8f;
+			attackTimer.backSwingTime = 0.3f;
 			attackTimer.renderTime = attackTimer.backSwingTime + attackTimer.activeTime;
 		}
 		

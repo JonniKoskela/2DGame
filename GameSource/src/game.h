@@ -4,6 +4,7 @@
 #include "action/action.h"
 #include "mobs.h"
 #include "player.h"
+#include "map/map.hpp"
 using Duration = std::chrono::duration<float>;
 using Clock = std::chrono::steady_clock;
 
@@ -31,6 +32,6 @@ bool arcHitDetection(float AttackAngle);
 struct GameState
 {
 	KeyMapping keyMappings[GAME_INPUT_COUNT];
-
+	MapScene currentMap{};
 };
 static GameState gameState{};

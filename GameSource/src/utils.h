@@ -136,6 +136,14 @@ public:
 		
 		*this *= matrix;
 	}
+	//void translate(Vec2 vec)
+	//{
+	//	Matrix3f matrix{};
+	//	matrix.data[2][0] = vec.x;
+	//	matrix.data[2][1] = vec.y;
+
+	//	*this *= matrix;
+	//}
 
 	// Overload the * operator for matrix multiplication
 	Matrix3f operator*(const Matrix3f& other) const
