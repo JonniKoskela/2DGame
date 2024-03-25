@@ -267,9 +267,6 @@
     <ClInclude Include="src\GLRenderer_attackRenderData.h" />
     <ClInclude Include="src\itemInterface.h" />
     <ClInclude Include="src\map\map.hpp" />
-    <ClInclude Include="src\map\mapEnum.h" />
-    <ClInclude Include="src\map\mapFilePaths.h" />
-    <ClInclude Include="src\map\mapMisc.h" />
     <ClInclude Include="src\mobs.h" />
     <ClInclude Include="src\input.h" />
     <ClInclude Include="src\input.hpp" />

@@ -4,6 +4,9 @@
 #include "glm.hpp"
 #include "math.h"
 #include <chrono>
+#include <fstream>
+#include <sstream>
+
 
 constexpr long double MPI = 3.14159265358979323851;
 
@@ -57,7 +60,6 @@ public:
 		*this *= scaleMatrix;
 	}
 
-	// Function to translate the matrix by a given offset in both dimensions
 	void translate(float translateX, float translateY)
 	{
 		Matrix2f translationMatrix;
@@ -466,6 +468,45 @@ void getFPS(float interval)
 		acc = 0;
 		ticks = 0;
 	}
+}
+
+//accepts std::string or any arithmetic type
+template<typename T>
+std::vector<T> filepath_vec(const char* filePath)
+{
+	std::ifstream ifs(filePath);
+	std::string str;
+	std::vector<T> vec;
+	std::string::size_type st;
+	T val;
+	while (std::getline(ifs, str, ','))
+	{
+		val = std::stoi(str, &st);
+		vec.push_back(val);
+	}
+	ifs.close();
+	return vec;
+}
+
+template<>
+std::vector<std::string> filepath_vec<std::string>(const char* filePath)
+{
+	std::ifstream ifs(filePath);
+	std::string str;
+	std::vector<std::string> vec;
+	while (std::getline(ifs, str, ','))
+	{
+		vec.push_back(str);
+	}
+	ifs.close();
+	return vec;
+}
+
+template<typename T>
+std::vector<T> filepath_vec(std::string& filePath)
+{
+	char* p = &filePath;
+	return filepath_vec<T>(filePath);
 }
 
 //float getMilliseconds()

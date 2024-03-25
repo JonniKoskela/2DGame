@@ -1,9 +1,8 @@
 #pragma once
 #include "../fileUtils.h"
-#include "mapEnum.h"
-#include "mapMisc.h"
-#include <fstream>
-#include "mapFilePaths.h"
+#include "../utils.h"
+#include <array>
+
 //void readMapFile();
 //void generateFile();
 //
@@ -12,96 +11,73 @@
 //void loadMapFiles();
 //void drawCurrentMap();
 
-
-
-
 /*
 	-need drawMap(gameState) function so that
 	
 	-need changeMap function
 	*/
-constexpr uint8_t MAP_TILESIZE = 32;
 
-void loadMapChunks(MAP_SCENEID, std::vector<MapChunk>&);
-void processMapChunk(std::vector<MapChunk>& mapChunks);
-
-
-struct MapLayoutCoordinate
+namespace MAP
 {
-	uint8_t x;
-	uint8_t y;
-
-	MapLayoutCoordinate(int right, int up)
+	enum MAP_ID
 	{
-		x = right;
-		y = up;
+		MAP_START,
+		MAP_DESERT,
+	};
+
+
+	std::string getMapFilePath(MAP_ID);
+
+
+	//mapChunk = (32x32 tiles) columns first
+	class Map
+	{
+	public:
+		uint8_t map_width{};
+		uint8_t map_height{};
+		MAP_ID stageID;
+		
+		Map _initMap(MAP_ID);
+	};
+
+	Map Map::_initMap(MAP_ID id)
+	{
+		Map map;
+		std::ifstream ifs;
+		std::string fileStr = getMapFilePath(id);
+		ifs.open(fileStr);
+		std::stringstream ss;
+		ss << ifs.rdbuf();
+		std::string buffer;
+		ss >> buffer;
+
+		size_t itStart = buffer.find_first_of('{');
+		size_t itEnd = buffer.find_first_of('}');
+		std::string whbuffer;
+		while (itStart != itEnd && itStart != ',')
+		{
+
+		}
+		ifs.close();
 	}
-}typedef MAP_POSITION;
 
 
-class MapChunk
-{
-public:
-	MapLayoutCoordinate ChunkPosition;
-	//map chunk size: 960x960px
-	uint8_t tileLayer[30][30];
-	bool collision[30][30];
-};
 
 
-class MapScene
-{
-public:
-	std::vector<MapChunk> mapChunks;
 
-	MapScene() = default;
-	MapScene(MAP_SCENEID id)
+
+
+
+
+
+	std::string getMapFilePath(MAP_ID id)
 	{
 		switch (id)
 		{
-		case START_AREA:
-			mapChunks = loadMapScene(id);
+		case MAP_START:
+			return "MAP_START.SMAP";
 			break;
 		}
+
 	}
-
-private:
-
-	std::vector<MapChunk> loadMapScene(MAP_SCENEID);
-};
-
-std::vector<MapChunk> MapScene::loadMapScene(MAP_SCENEID id)
-{
-	std::vector<MapChunk> mapChunks{};
-
-	loadMapChunks(id,mapChunks);
-
-	return mapChunks;
-}
-
-// load files and parse into mapChunks
-
-void loadMapChunks(MAP_SCENEID id, std::vector<MapChunk>& mapChunks)
-{
-	std::ifstream fstream;
-
-	switch (id)
-	{
-	case START_AREA:
-		
-	}
-}
-
-void processMapChunk(std::vector<MapChunk>& mapChunks)
-{
-	std::ifstream fstream{};
-
-
-
-}
-
-
-void drawMap(const GameState& gameState)
-{
-	//
 }

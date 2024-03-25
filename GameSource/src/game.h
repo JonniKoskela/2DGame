@@ -32,6 +32,6 @@ bool arcHitDetection(float AttackAngle);
 struct GameState
 {
 	KeyMapping keyMappings[GAME_INPUT_COUNT];
-	MapScene currentMap{};
+	//MAP::MapScene currentMap{};
 };
 static GameState gameState{};

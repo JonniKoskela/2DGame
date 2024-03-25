@@ -10,7 +10,6 @@
 #include "game.h"
 #include "action/attackTimer.hpp"
 #include "GLrenderer_attackQueue.hpp"
-#include "fileutils.h"
 
 
 
@@ -97,8 +96,6 @@ void simulate()
 			if (actionSlot.onCooldown)
 			{
 				updateActionState(actionSlot.boundAction,false);
-				//std::cout << "cd timer:" << actionSlot.boundAction.attackTimer.coolDownTimer<< "\n";
-				//std::cout << "delta: " << deltaTime << "\n";
 				actionSlot.boundAction.actionTimer.coolDownTimer += deltaTime;
 				if (actionSlot.boundAction.actionTimer.coolDownTimer > actionSlot.boundAction.actionTimer.totalCoolDown)
 				{
