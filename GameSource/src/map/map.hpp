@@ -29,7 +29,6 @@ namespace MAP
 	std::string getMapFilePath(MAP_ID);
 
 
-	//mapChunk = (32x32 tiles) columns first
 	class Map
 	{
 	public:
