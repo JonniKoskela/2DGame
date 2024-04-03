@@ -34,6 +34,7 @@ namespace MAP
 	public:
 		uint8_t map_width{};
 		uint8_t map_height{};
+		std::vector <uint16_t> tileLayer;
 		MAP_ID stageID;
 		
 		Map _initMap(MAP_ID);
@@ -42,20 +43,33 @@ namespace MAP
 	Map Map::_initMap(MAP_ID id)
 	{
 		Map map;
-		std::ifstream ifs;
-		std::string fileStr = getMapFilePath(id);
-		ifs.open(fileStr);
-		std::stringstream ss;
-		ss << ifs.rdbuf();
-		std::string buffer;
-		ss >> buffer;
-
-		size_t itStart = buffer.find_first_of('{');
-		size_t itEnd = buffer.find_first_of('}');
-		std::string whbuffer;
-		while (itStart != itEnd && itStart != ',')
+		std::vector<uint16_t> vec;
+		std::ifstream ifs(getMapFilePath(id));
+		if (!ifs)
 		{
+			std::cout << "fail";
+		}
+		std::stringstream sstream;
+		sstream << ifs.rdbuf();
 
+		std::string buf;
+		sstream >> buf;
+		assert((buf[0] == '{' && buf[buf.length() - 1] == '}'));
+		std::string::iterator bufIT = buf.begin() + 1;
+
+		std::string::size_type sz{};
+		std::string numberBuffer = std::string(buf.begin() + 1, buf.begin() + buf.find(','));
+		map.map_width = std::stoi(numberBuffer);
+		numberBuffer = std::string(buf.begin() + buf.find(',') + 1, buf.begin() + buf.find('}'));
+		map.map_height = std::stoi(numberBuffer);
+
+
+		//sstream >> buf;
+
+		std::string token;
+		while (std::getline(sstream, token, ','))
+		{
+			map.tileLayer.push_back(std::stoi(token));
 		}
 		ifs.close();
 	}
