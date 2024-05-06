@@ -281,6 +281,7 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="assets\textureAtlas.png" />
+    <Image Include="assets\tileMapAtlas.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\arc.frag" />

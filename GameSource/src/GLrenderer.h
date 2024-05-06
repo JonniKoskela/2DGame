@@ -10,10 +10,13 @@
 
 
 const char* TEXTURE_PATH = "assets/textureAtlas.png";
+const char* TILEMAP_ATLAS_PATH = "assets/tileMapAtlas.png";
 
-void generateMapBuffer(BumpAllocator*);
-bool compileShaders(BumpAllocator* bump);
-bool compileArcShaders(BumpAllocator* bump);
+void generateMapTexture(BumpAllocator*);
+bool fillMapBuffer();
+bool compileShaders(BumpAllocator*);
+bool compileArcShaders(BumpAllocator*);
+bool compileMapShaders(BumpAllocator*);
 
 GLuint attackTransformsSBO{};
 
@@ -37,7 +40,15 @@ GLuint slamDurationLocation{};
 GLuint rotationMatrixLocation{};
 
 GLuint mapTextureFile{};
-GLuint mapBuffer{};
+GLuint mapDataSSBO{};
+GLuint mapShader{};
+GLuint mapHeightUniform{};
+GLuint mapWidthUniform{};
+GLuint mapProjectionLocation{};
+
+GLuint tileMapAtlasLocation{};
+
+GLint textureArray[5];
 
 static bool renderSlamBool{ false };
 

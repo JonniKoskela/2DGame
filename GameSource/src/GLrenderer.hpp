@@ -23,7 +23,7 @@ static Vec2 screenSize{ 1280.0f,720.0f };
 
 bool glInit(BumpAllocator* bump)
 {
-    GLenum error{};
+    GLenum error = glGetError();
 	attackTransforms.reserve(1000);
     if (!compileShaders(bump))
     {
@@ -33,6 +33,18 @@ bool glInit(BumpAllocator* bump)
 	if (error)
 	{
 		std::cout << "GLERROR a: " << error << "\n";
+	}
+	//compile mapShader
+	{
+		compileMapShaders(bump);
+		generateMapTexture(bump);
+		fillMapBuffer();
+
+		GLenum error = glGetError();
+		if (error)
+		{
+			std::cout << "GLERROR map setup: general " << error << "\n";
+		}
 	}
 	//compile attackShader and get uniforms
 	{
@@ -48,6 +60,7 @@ bool glInit(BumpAllocator* bump)
 		arcFadeDurationLocation = glGetUniformLocation(arcShader, "arcFadeDuration");
 		rotationMatrixLocation = glGetUniformLocation(arcShader, "rotationMatrix");
 
+		tileMapAtlasLocation = glGetUniformLocation(mapShader,"tileMapAtlas");
 
 
 		error = glGetError();
@@ -130,13 +143,11 @@ bool glInit(BumpAllocator* bump)
     glUniformMatrix4fv(orthoID, 1, GL_FALSE, &orthoProjection.data[0][0]);
 
 
-
 	//generate arc buffer
     glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     return true;
 }
-
 
 
 
@@ -151,9 +162,8 @@ void openGLRender()
 			camera.position.y + camera.dimensions.y / 2.0f,
 			camera.position.y - camera.dimensions.y / 2.0f);
 
-
-
 	{
+
 		glUseProgram(shaderProgram);
 		glViewport(0, 0, screenSize.x, screenSize.y);
 		glClearColor(119.0f / 255.0f, 33.0f / 255.0f, 111.0f / 255.0f, 1.0f);
@@ -193,6 +203,36 @@ void openGLRender()
 			}
 			attackTransforms.clear();
 		}
+		if (error)
+		{
+			std::cout << "GLERROR mapDraw b4: " << error << "\n";
+		}
+		//rendermap
+		{
+			glUseProgram(mapShader);
+			glBindBuffer(GL_SHADER_STORAGE_BUFFER, mapDataSSBO);
+			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, mapDataSSBO);
+			//glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, sizeof(uint32_t) * gameState.currentMap.tileLayer.size(), gameState.currentMap.tileLayer.data());
+			error = glGetError();
+			if (error)
+			{
+				std::cout << "GLERROR mapDraw 1: " << error << "\n";
+			}
+			//glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, mapDataSSBO);
+			glUniformMatrix4fv(mapProjectionLocation, 1, GL_FALSE, &orthoProjection.data[0][0]);
+			error = glGetError();
+			if (error)
+			{
+				std::cout << "GLERROR mapDraw 2: " << error << "\n";
+			}
+			//glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, sizeof(uint32_t) * gameState.currentMap.tileLayer.size(), gameState.currentMap.tileLayer.data());
+			glDrawArraysInstanced(GL_TRIANGLES, 0, 6, gameState.currentMap.tileLayer.size());
+			error = glGetError();
+			if (error)
+			{
+				std::cout << "GLERROR mapDraw 3: " << error << "\n";
+			}
+		}
 	}
 	error = glGetError();
 	if(error)
@@ -203,34 +243,26 @@ void openGLRender()
 
 
 
-
-
-
-
-
-
-
-
-
 bool compileShaders(BumpAllocator* bump)
 {
 	GLuint vertShaderID = glCreateShader(GL_VERTEX_SHADER);
+	GLenum error = glGetError();
 	GLuint fragShaderID = glCreateShader(GL_FRAGMENT_SHADER);
+	error = glGetError();
 	shaderProgram = glCreateProgram();
-
 	int fileSize = 0;
 	char* vertShader = readFile(const_cast<char*>("assets/quad.vert"), &fileSize, bump);
 	char* fragShader = readFile(const_cast<char*>("assets/quad.frag"), &fileSize, bump);
-
+	error = glGetError();
 	if (!vertShader || !fragShader)
 	{
 		std::cerr << "failed to load shaders";
 		return false;
 	}
-	GLenum error = glGetError();
+	error = glGetError();
 	if (error)
 	{
-		std::cout << "GLERROR compile.1: " << error << "\n";
+		std::cout << "GLERROR compile.1: general " << error << "\n";
 	}
 
 
@@ -270,7 +302,6 @@ bool compileShaders(BumpAllocator* bump)
 	{
 		std::cout << "GLERROR c.4: " << error << "\n";
 	}
-
 	{
 		int success{};
 		char infoLog[512];
@@ -287,9 +318,6 @@ bool compileShaders(BumpAllocator* bump)
 	glDetachShader(shaderProgram, fragShaderID);
 	glDeleteShader(vertShaderID);
 	glDeleteShader(fragShaderID);
-
-
-
 
 	return true;
 }
@@ -375,34 +403,142 @@ bool compileArcShaders(BumpAllocator* bump)
 	return true;
 }
 
-void generateMapBuffer(BumpAllocator* bump)
-{
 
+
+bool compileMapShaders(BumpAllocator* bump)
+{
+	GLuint vertShaderID = glCreateShader(GL_VERTEX_SHADER);
+	GLuint fragShaderID = glCreateShader(GL_FRAGMENT_SHADER);
+	mapShader = glCreateProgram();
+
+	int fileSize = 0;
+	char* vertShader = readFile(const_cast<char*>("assets/mapShader.vert"), &fileSize, bump);
+	char* fragShader = readFile(const_cast<char*>("assets/mapShader.frag"), &fileSize, bump);
+
+	if (!vertShader || !fragShader)
+	{
+		std::cerr << "failed to load shaders";
+		return false;
+	}
+	GLenum error = glGetError();
+	if (error)
+	{
+		std::cout << "GLERROR compile.1: " << error << "\n";
+	}
+
+	glShaderSource(vertShaderID, 1, &vertShader, 0);
+	glCompileShader(vertShaderID);
+	{
+		int success{};
+		char infoLog[512];
+		glGetShaderiv(vertShaderID, GL_COMPILE_STATUS, &success);
+		if (!success)
+		{
+			glGetShaderInfoLog(vertShaderID, 512, NULL, infoLog);
+			std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+			return false;
+		}
+	}
+	error = glGetError();
+	glAttachShader(mapShader, vertShaderID);
+
+	glShaderSource(fragShaderID, 1, &fragShader, 0);
+	glCompileShader(fragShaderID);
+	{
+		int success{};
+		char infoLog[512];
+		glGetShaderiv(fragShaderID, GL_COMPILE_STATUS, &success);
+		if (!success)
+		{
+			glGetShaderInfoLog(fragShaderID, 512, NULL, infoLog);
+			std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
+			return false;
+		}
+	}
+	glAttachShader(mapShader, fragShaderID);
+	glLinkProgram(mapShader);
+	error = glGetError();
+	if (error)
+	{
+		std::cout << "GLERROR c.4: " << error << "\n";
+	}
 
 	{
-		int width, height, channels;
-		char* data = (char*)stbi_load(TEXTURE_PATH, &width, &height, &channels, 4);
-		assert(data && "stbi_load failure");
-
+		int success{};
+		char infoLog[512];
+		glGetProgramiv(mapShader, GL_LINK_STATUS, &success);
+		if (!success)
 		{
-			glUseProgram(shaderProgram);
-			glGenTextures(1, &mapTextureFile);
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, textureAtlas_01);
+			glGetProgramInfoLog(mapShader, 512, NULL, infoLog);
+			std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
+		}
+	}
+	glUseProgram(mapShader);
 
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 3);
+	glDetachShader(mapShader, vertShaderID);
+	glDetachShader(mapShader, fragShaderID);
+	glDeleteShader(vertShaderID);
+	glDeleteShader(fragShaderID);
 
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB8_ALPHA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+	return true;
+}
+
+
+
+bool fillMapBuffer()
+{
+	glUseProgram(mapShader);
+	glGenBuffers(1, &mapDataSSBO);
+	mapHeightUniform = glGetUniformLocation(mapShader,"mapHeight");
+	mapWidthUniform = glGetUniformLocation(mapShader, "mapWidth");
+
+	bool validData = (gameState.currentMap.map_height != 0 && gameState.currentMap.map_width != 0);
+	assert(validData == true, "mapData not valid");
+
+	glUniform1ui(mapHeightUniform, gameState.currentMap.map_height);
+	glUniform1ui(mapWidthUniform, gameState.currentMap.map_width);
+	mapProjectionLocation = glGetUniformLocation(mapShader,"orthoProjection");
+
+	GLenum error = glGetError();
+	if (error)
+	{
+		std::cout << "GLERROR mapBuffer 1: " << error << "\n";
+	}
+
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, mapDataSSBO);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, mapDataSSBO);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(uint32_t) * gameState.currentMap.tileLayer.size(), gameState.currentMap.tileLayer.data(),GL_STATIC_DRAW);
+
+	error = glGetError();
+	if (error)
+	{
+		std::cout << "GLERROR mapBuffer 2: " << error << "\n";
+	}
+	return true;
+}
+
+
+
+void generateMapTexture(BumpAllocator* bump)
+{
+	glUseProgram(mapShader);
+	GLenum error;
+	{
+		int width, height, channels;
+		char* data = (char*)stbi_load(TILEMAP_ATLAS_PATH, &width, &height, &channels, 4);
+		assert(data && "stbi_load failure");
+		error  = glGetError();
+		if (error)
+		{
+			std::cout << "GLERROR generating mapBuffer:1 " << error << "\n";
 		}
 		{
-			glUseProgram(arcShader);
-			glGenTextures(1, &arcShaderTexture);
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, arcShaderTexture);
+			glActiveTexture(GL_TEXTURE1);
+			glGenTextures(1, &mapTextureFile);
+
+
+			glBindTexture(GL_TEXTURE_2D, mapTextureFile);
+
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -413,9 +549,11 @@ void generateMapBuffer(BumpAllocator* bump)
 		}
 		stbi_image_free(data);
 	}
-	GLenum error = glGetError();
+	glUniform1i(tileMapAtlasLocation, mapTextureFile);
+	error = glGetError();
 	if (error)
 	{
 		std::cout << "GLERROR generating mapBuffer: " << error << "\n";
 	}
+
 }

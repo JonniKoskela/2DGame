@@ -109,27 +109,27 @@ void processSlam(Action& action,bool renderer)
 	//	slamHitDetection();
 	//}
 }
-std::vector<Vec2> generateSlamVertices(Vec2& pos, float mAngle, float range, float slamTimer)
-{
-	//std::vector<Vec2> vertices{};
-	//vertices.reserve(4);
-	//float angle = mAngle + 0.5f * fPi;
-	//float distance = 30.0f;
-	//float width = 50.0f;
-	//float endRange = distance + (range * slamTimer);
-	//float innerAngle = tanf(width * 0.5f / distance);
-	//float outerAngle = tanf(width * 0.5f / endRange);	
-	//Matrix3f transform{};
-	//transform.translate(100, 50);
-	//transform.rotate(1);
-
-	//vertices.push_back(Vec2{ pos.x + distance * cosf(angle - innerAngle), pos.y - distance * sinf(angle - innerAngle) });
-	//vertices.push_back(Vec2{ pos.x + distance * cosf(angle + innerAngle), pos.y - distance * sinf(angle + innerAngle) });
-	//vertices.push_back(Vec2{ pos.x+1 + endRange * cosf(angle + outerAngle), pos.y - endRange * sinf(angle + outerAngle) });
-	//vertices.push_back(Vec2{ pos.x+1 + endRange * cosf(angle - outerAngle), pos.y - endRange * sinf(angle - outerAngle) });
-
-	//return vertices;
-}
+//std::vector<Vec2> generateSlamVertices(Vec2& pos, float mAngle, float range, float slamTimer)
+//{
+//	//std::vector<Vec2> vertices{};
+//	//vertices.reserve(4);
+//	//float angle = mAngle + 0.5f * fPi;
+//	//float distance = 30.0f;
+//	//float width = 50.0f;
+//	//float endRange = distance + (range * slamTimer);
+//	//float innerAngle = tanf(width * 0.5f / distance);
+//	//float outerAngle = tanf(width * 0.5f / endRange);	
+//	//Matrix3f transform{};
+//	//transform.translate(100, 50);
+//	//transform.rotate(1);
+//
+//	//vertices.push_back(Vec2{ pos.x + distance * cosf(angle - innerAngle), pos.y - distance * sinf(angle - innerAngle) });
+//	//vertices.push_back(Vec2{ pos.x + distance * cosf(angle + innerAngle), pos.y - distance * sinf(angle + innerAngle) });
+//	//vertices.push_back(Vec2{ pos.x+1 + endRange * cosf(angle + outerAngle), pos.y - endRange * sinf(angle + outerAngle) });
+//	//vertices.push_back(Vec2{ pos.x+1 + endRange * cosf(angle - outerAngle), pos.y - endRange * sinf(angle - outerAngle) });
+//
+//	//return vertices;
+//}
 
 void processMovingArc(Action& action,Player& player ,bool renderer)
 {

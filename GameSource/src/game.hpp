@@ -11,6 +11,7 @@
 #include "action/attackTimer.hpp"
 #include "GLrenderer_attackQueue.hpp"
 #include "map/map.hpp"
+#include "GLrenderer.h"
 
 
 
@@ -162,7 +163,8 @@ void setupGame()
 	actionBar.actions[2].active = true;
 
 	player.equipment.equipWeapon(WEAPON_DAGGER_IRON);
-	//gameState.currentMap = MAP::Map::_initMap(MAP::MAP_START);
+	gameState.currentMap = MAP::Map::_initMap(MAP::MAP_START);
+	//fillMapBuffer();
 }
 
 double getTime() 

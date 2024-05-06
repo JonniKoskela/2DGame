@@ -30,9 +30,9 @@ namespace MAP
 	class Map
 	{
 	public:
-		uint8_t map_width{};
-		uint8_t map_height{};
-		std::vector <uint16_t> tileLayer;
+		GLSL_uint map_width{};
+		GLSL_uint map_height{};
+		std::vector<uint32_t> tileLayer;
 		MAP_ID stageID;
 
 		static Map _initMap(MAP_ID id);
@@ -44,11 +44,13 @@ namespace MAP
 		Map map{};
 		
 		std::string fp = getMapFilePath(id);
+
 		std::ifstream ifs(fp);
 		if (!ifs)
 		{
-			std::cout << "fail";
+			std::cout << "failed to open file, map.hpp";
 		}
+		assert(ifs.good());
 		std::stringstream sstream;
 		sstream << ifs.rdbuf();
 
@@ -64,7 +66,8 @@ namespace MAP
 		y = std::stoi(numberBuffer);
 
 		std::cout << x << " " << y << "\n";
-
+		map.map_width = x;
+		map.map_height = y;
 		//sstream >> buf;
 		std::string tiles;
 
@@ -83,7 +86,10 @@ namespace MAP
 			std::cout << i << "\n";
 		}
 
+		std::cout << "map loaded" << std::endl;
+		std::cout << x + y << std::endl;
 		ifs.close();
+
 		return map;
 	}
 
@@ -101,7 +107,7 @@ namespace MAP
 		switch (id)
 		{
 		case MAP_START:
-			return "MAP_START.SMAP";
+			return "./assets/mapFiles/MAP_START.SMAP";
 			break;
 		}
 
