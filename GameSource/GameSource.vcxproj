@@ -259,6 +259,7 @@
     <ClInclude Include="src\equipment\equipment_ENUM.h" />
     <ClInclude Include="src\equipment\weapon.h" />
     <ClInclude Include="src\equipment\WeaponStats.h" />
+    <ClInclude Include="src\Events.hpp" />
     <ClInclude Include="src\game.h" />
     <ClInclude Include="src\game_worldGrid.h" />
     <ClInclude Include="src\GLrenderer.h" />
