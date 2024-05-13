@@ -1,5 +1,7 @@
 #pragma once
 #include "equipment/equipmentSet.h"
+
+class LocationEventObserver;
 enum WeaponDisplacement
 {
 	WEAPON_DISPLACEMENT_LEFT,
@@ -31,7 +33,7 @@ public:
 	WeaponRenderData weaponRenderData{};
 	bool attacking{ false };
 	bool moving{ false };
-
+	std::unique_ptr<LocationEventObserver> LEObserver;
 };
 static Player player{};
 

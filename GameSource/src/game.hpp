@@ -12,85 +12,26 @@
 #include "GLrenderer_attackQueue.hpp"
 #include "map/map.hpp"
 #include "GLrenderer.h"
+#include "Events.hpp"
+
 
 
 
 double getRenderTime();
+void checkObserverState();
 void updateEquipmentPosition();
+void updatePlayerMovement();
+void updateKeyBindingState();
+
+
+
 void simulate() 
 {
-	float runSpeed = 2.0f;
-	float runAccel = 17.0f;
-	float runReduce = 7.0f;
-	float gravity = 3.0f;
-
-	bool yKeyDown = (pollAction(MOVE_DOWN, KEY_DOWN) == true || pollAction(MOVE_UP, KEY_DOWN) == true);
-	bool xKeyDown = (pollAction(MOVE_RIGHT, KEY_DOWN) == true || pollAction(MOVE_LEFT, KEY_DOWN) == true);
-
-	if (xKeyDown)
-	{
-		runAccel /= 1.6f;
-		runSpeed *= 0.71f;
-	}
-	if (yKeyDown)
-	{
-		runAccel /= 1.6f;
-		runSpeed *= 0.71f;
-	}
-
-	//calculate new speed for player
-	{
-		if (yKeyDown)
-		{
-			//std::cout << player.pos.x << " " << player.pos.y << "\n";
-			if (pollAction(MOVE_UP, KEY_DOWN) == true)
-			{
-				player.speed.y = approach(player.speed.y, runSpeed, runAccel * DELTA);
-			}
-			if (pollAction(MOVE_DOWN, KEY_DOWN) == true)
-			{
-				player.speed.y = approach(player.speed.y, -runSpeed, runAccel * DELTA);
-			}
-		}
-		else
-		{
-			player.speed.y = approach(player.speed.y, 0.0f, runReduce * DELTA);
-		}
-		if (xKeyDown)
-		{
-			if (pollAction(MOVE_RIGHT, KEY_DOWN) == true)
-			{
-				player.speed.x = approach(player.speed.x, runSpeed, runAccel * DELTA);
-			}
-			if (pollAction(MOVE_LEFT, KEY_DOWN) == true)
-			{
-				player.speed.x = approach(player.speed.x, -runSpeed, runAccel * DELTA);
-			}
-		}
-		else 
-		{
-			player.speed.x = approach(player.speed.x, 0.0f, runReduce * DELTA);
-		}
+	checkObserverState();
+	updatePlayerMovement();
+	updateKeyBindingState();
 
 
-		{
-			if (pollAction(ACTIONBAR_1, KEY_DOWN) == true && actionBar.actions[0].onCooldown == false)
-			{
-				actionBar.actions[0].onCooldown = true;
-				player.weaponRenderData.playerWeaponOnLeft = !player.weaponRenderData.playerWeaponOnLeft;
-			}
-			if (pollAction(ACTIONBAR_2, KEY_DOWN) == true && actionBar.actions[1].onCooldown == false)
-			{
-				actionBar.actions[1].onCooldown = true;
-				player.weaponRenderData.playerWeaponOnLeft = !player.weaponRenderData.playerWeaponOnLeft;
-			}
-			if (pollAction(ACTIONBAR_3, KEY_DOWN) == true && actionBar.actions[2].onCooldown == false)
-			{
-				actionBar.actions[2].onCooldown = true;
-				player.weaponRenderData.playerWeaponOnLeft = !player.weaponRenderData.playerWeaponOnLeft;
-			}
-		}
-	}
 
 	//update cooldowns && process Actions
 		for (ActionBarSlot& actionSlot : actionBar.actions)
@@ -117,7 +58,7 @@ void simulate()
 void mainGameLoop() 
 {
 
-
+	//std::cout << player.pos;
 	deltaTime += getTime();
 	if (deltaTime >= DELTA)
 	{
@@ -147,7 +88,7 @@ void mainGameLoop()
 
 
 
-void setupGame() 
+void initGame() 
 {
 	player.pos = { 50.0f, 50.0f };
 	renderData->gameCamera.dimensions = { 640.0f,360.0f };
@@ -164,6 +105,13 @@ void setupGame()
 
 	player.equipment.equipWeapon(WEAPON_DAGGER_IRON);
 	gameState.currentMap = MAP::Map::_initMap(MAP::MAP_START);
+
+	LocationEventData testLED{ testBorders,testEvent };
+	testLED.detachObserver = true;
+	testEventList.eventList.push_back(testLED);
+	static LocationEventObserver testLEO(testEventList);
+	player.LEObserver = std::make_unique<LocationEventObserver>(testEventList);;
+	player.LEObserver->active = true;
 	//fillMapBuffer();
 }
 
@@ -227,5 +175,92 @@ void updateEquipmentPosition()
 		/*player.weaponRenderData.renderData = */
 		
 
+	}
+}
+
+void updatePlayerMovement()
+{
+	
+	float runSpeed = 2.0f;
+	float runAccel = 17.0f;
+	float runReduce = 7.0f;
+	float gravity = 3.0f;
+
+	bool yKeyDown = (pollAction(MOVE_DOWN, KEY_DOWN) == true || pollAction(MOVE_UP, KEY_DOWN) == true);
+	bool xKeyDown = (pollAction(MOVE_RIGHT, KEY_DOWN) == true || pollAction(MOVE_LEFT, KEY_DOWN) == true);
+
+	if (xKeyDown)
+	{
+		runAccel /= 1.6f;
+		runSpeed *= 0.71f;
+	}
+	if (yKeyDown)
+	{
+		runAccel /= 1.6f;
+		runSpeed *= 0.71f;
+	}
+
+	//calculate new speed for player
+	{
+		if (yKeyDown)
+		{
+			//std::cout << player.pos.x << " " << player.pos.y << "\n";
+			if (pollAction(MOVE_UP, KEY_DOWN) == true)
+			{
+				player.speed.y = approach(player.speed.y, runSpeed, runAccel * DELTA);
+			}
+			if (pollAction(MOVE_DOWN, KEY_DOWN) == true)
+			{
+				player.speed.y = approach(player.speed.y, -runSpeed, runAccel * DELTA);
+			}
+		}
+		else
+		{
+			player.speed.y = approach(player.speed.y, 0.0f, runReduce * DELTA);
+		}
+		if (xKeyDown)
+		{
+			if (pollAction(MOVE_RIGHT, KEY_DOWN) == true)
+			{
+				player.speed.x = approach(player.speed.x, runSpeed, runAccel * DELTA);
+			}
+			if (pollAction(MOVE_LEFT, KEY_DOWN) == true)
+			{
+				player.speed.x = approach(player.speed.x, -runSpeed, runAccel * DELTA);
+			}
+		}
+		else
+		{
+			player.speed.x = approach(player.speed.x, 0.0f, runReduce * DELTA);
+		}
+	}
+}
+
+void updateKeyBindingState()
+{
+	{
+		if (pollAction(ACTIONBAR_1, KEY_DOWN) == true && actionBar.actions[0].onCooldown == false)
+		{
+			actionBar.actions[0].onCooldown = true;
+			player.weaponRenderData.playerWeaponOnLeft = !player.weaponRenderData.playerWeaponOnLeft;
+		}
+		if (pollAction(ACTIONBAR_2, KEY_DOWN) == true && actionBar.actions[1].onCooldown == false)
+		{
+			actionBar.actions[1].onCooldown = true;
+			player.weaponRenderData.playerWeaponOnLeft = !player.weaponRenderData.playerWeaponOnLeft;
+		}
+		if (pollAction(ACTIONBAR_3, KEY_DOWN) == true && actionBar.actions[2].onCooldown == false)
+		{
+			actionBar.actions[2].onCooldown = true;
+			player.weaponRenderData.playerWeaponOnLeft = !player.weaponRenderData.playerWeaponOnLeft;
+		}
+	}
+}
+
+void checkObserverState()
+{ 
+	if (player.LEObserver->active)
+	{
+		player.LEObserver->updateEventStatus();
 	}
 }

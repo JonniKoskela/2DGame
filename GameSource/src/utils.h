@@ -465,6 +465,7 @@ void getFPS(float interval)
 	if (acc > interval)
 	{
 		std::cout << ticks << "\n";
+
 		acc = 0;
 		ticks = 0;
 	}

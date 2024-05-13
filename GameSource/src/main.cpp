@@ -53,7 +53,7 @@ int main(void)
 
 
 	initializeInputs();
-	setupGame();
+	initGame();
 
 
     glInit(&bump);

@@ -19,7 +19,7 @@ static double deltaTime = 0.0;
 static double renderTimer{ 0 };
 
 double getTime();
-void setupGame();
+void initGame();
 Vec2 toWorldCoordinates(Vec2 position);
 void updateMousePos();
 void updateActionRenderState(double renderTimer);

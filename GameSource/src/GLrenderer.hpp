@@ -21,7 +21,8 @@ static Vec2 screenSize{ 1280.0f,720.0f };
 
 
 
-bool glInit(BumpAllocator* bump)
+bool glInit
+(BumpAllocator* bump)
 {
     GLenum error = glGetError();
 	attackTransforms.reserve(1000);
