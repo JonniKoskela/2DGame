@@ -10,7 +10,7 @@ using Clock = std::chrono::steady_clock;
 
 
 
-constexpr double DELTA = (float)1 / 60;
+constexpr double DELTA = 1.0 / 60.0;
 static Mob gobo;
 static ActionBar actionBar{};
 
@@ -29,9 +29,20 @@ void checkActionRenderStatus(ActionBar&);
 //void startArcAttack();
 bool arcHitDetection(float AttackAngle);
 
+enum ACTIVE_GAMESTATE
+{
+	GAMESTATE_PLAYING,
+	GAMESTATE_MAINMENU,
+	GAMESTATE_PAUSED,
+};
+
+
 struct GameState
 {
+	
 	KeyMapping keyMappings[GAME_INPUT_COUNT];
 	MAP::Map currentMap{};
+	ACTIVE_GAMESTATE activeState = GAMESTATE_PLAYING;
 };
+
 static GameState gameState{};

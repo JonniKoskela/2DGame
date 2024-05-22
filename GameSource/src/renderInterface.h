@@ -9,15 +9,14 @@
 struct Transform {
 	Vec2 size{ 0 };
 	Vec2 pos{ 0 };
-	iVec2 atlasOffset{ 0 };
-	iVec2 spriteSize{ 0 };
+	iVec2 atlasOffset{ 0,0 };
+	iVec2 spriteSize{ 0,0 };
 };
 
 struct OrtographicCamera {
-	Vec2 position{ 0 };
-	Vec2 dimensions{ 0 };
+	Vec2 position{ 0.0f,0.0f };
+	Vec2 dimensions{ 0.0f,0.0f };
 	float zoom = 1.0f;
-
 };
 
 

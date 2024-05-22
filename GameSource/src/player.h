@@ -7,7 +7,7 @@ enum WeaponDisplacement
 	WEAPON_DISPLACEMENT_LEFT,
 };
 
-enum PlayerCurrentActionStateID
+enum CurrentActionState
 {
 	PLAYER_IDLE,
 	PLAYER_ATTACKING,
@@ -29,6 +29,7 @@ public:
 	Vec2 pos{};
 	Vec2 renderPos{};
 	Vec2 speed{};
+	const iVec2 size{31,31};
 	EquipmentSet equipment{};
 	WeaponRenderData weaponRenderData{};
 	bool attacking{ false };

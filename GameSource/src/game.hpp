@@ -15,6 +15,7 @@
 #include "Events.hpp"
 
 
+constexpr int GAME_TILESIZE = 32;
 
 
 double getRenderTime();
@@ -22,13 +23,14 @@ void checkObserverState();
 void updateEquipmentPosition();
 void updatePlayerMovement();
 void updateKeyBindingState();
-
+bool checkCollision();
 
 
 void simulate() 
 {
 	checkObserverState();
 	updatePlayerMovement();
+
 	updateKeyBindingState();
 
 
@@ -48,11 +50,7 @@ void simulate()
 			}
 		}
 
-	//calculate new position if changed
-	{
-		player.pos.x += player.speed.x;
-		player.pos.y += player.speed.y;
-	}
+
 }
 
 void mainGameLoop() 
@@ -60,27 +58,32 @@ void mainGameLoop()
 
 	//std::cout << player.pos;
 	deltaTime += getTime();
+
 	if (deltaTime >= DELTA)
 	{
 		updateMousePos();
+		//static iVec2 mp{ (int)mPos.x / 32, (int)mPos.y / 32 };
+		//std::cout << mp << "\n";
 		// update current physical state of mapped keys. done by glfw
 		updateKeyState();
 		// calculate speed, movement, cooldowns, start attacks...
 		simulate();
+
 		deltaTime -= DELTA;
 		renderTimer -= DELTA;
 		//std::cout << mPos.x << " " << mPos.y << " normalized:  " << normalized.x << normalized.y<< "\n";
 	}
+
 	renderTimer += getRenderTime();
 	updateActionRenderState(renderTimer);
 	lerpPlayerPosition();
+
 	updateEquipmentPosition();
-	//drawSprite(SPRITE_DOOR, Vec2{ 50.0f,50.0f });
+	Vec2 pv{ player.renderPos.x, player.renderPos.y};
+	drawSprite(SPRITE_FROG, pv);
+	drawSprite(SPRITE_MOB_GOBLIN, gobo.position); 
 
-	drawSprite(SPRITE_FROG, player.renderPos);
-	drawSprite(SPRITE_MOB_GOBLIN, gobo.position);
-
-	drawPlayerEquipment(player);
+	//drawPlayerEquipment(player);
 	renderData->gameCamera.position = player.renderPos;
 
 	getFPS(1.0f);
@@ -90,7 +93,7 @@ void mainGameLoop()
 
 void initGame() 
 {
-	player.pos = { 50.0f, 50.0f };
+	player.pos = {50,50};
 	renderData->gameCamera.dimensions = { 640.0f,360.0f };
 	renderData->gameCamera.position = { 0.0f, 0.0f };
 	gobo = createMob(MOB_GOBLIN);
@@ -112,7 +115,6 @@ void initGame()
 	static LocationEventObserver testLEO(testEventList);
 	player.LEObserver = std::make_unique<LocationEventObserver>(testEventList);;
 	player.LEObserver->active = true;
-	//fillMapBuffer();
 }
 
 double getTime() 
@@ -161,7 +163,7 @@ void updateActionRenderState(double renderTimer)
 void lerpPlayerPosition()
 {
 	{
-		player.renderPos.x = player.pos.x + (player.speed.x*(renderTimer/DELTA));
+		player.renderPos.x = player.pos.x + (player.speed.x * (renderTimer / DELTA));
 		player.renderPos.y = player.pos.y + (player.speed.y * (renderTimer / DELTA));
 	}
 }
@@ -180,7 +182,6 @@ void updateEquipmentPosition()
 
 void updatePlayerMovement()
 {
-	
 	float runSpeed = 2.0f;
 	float runAccel = 17.0f;
 	float runReduce = 7.0f;
@@ -188,6 +189,7 @@ void updatePlayerMovement()
 
 	bool yKeyDown = (pollAction(MOVE_DOWN, KEY_DOWN) == true || pollAction(MOVE_UP, KEY_DOWN) == true);
 	bool xKeyDown = (pollAction(MOVE_RIGHT, KEY_DOWN) == true || pollAction(MOVE_LEFT, KEY_DOWN) == true);
+
 
 	if (xKeyDown)
 	{
@@ -208,7 +210,7 @@ void updatePlayerMovement()
 			if (pollAction(MOVE_UP, KEY_DOWN) == true)
 			{
 				player.speed.y = approach(player.speed.y, runSpeed, runAccel * DELTA);
-			}
+			} 
 			if (pollAction(MOVE_DOWN, KEY_DOWN) == true)
 			{
 				player.speed.y = approach(player.speed.y, -runSpeed, runAccel * DELTA);
@@ -234,6 +236,7 @@ void updatePlayerMovement()
 			player.speed.x = approach(player.speed.x, 0.0f, runReduce * DELTA);
 		}
 	}
+	checkCollision();
 }
 
 void updateKeyBindingState()
@@ -263,4 +266,80 @@ void checkObserverState()
 	{
 		player.LEObserver->updateEventStatus();
 	}
+}
+bool checkCollision()
+{
+	constexpr iVec2 tileSize{ 32,32 };
+	static Vec2 remainder;
+
+	Vec2 futurePosition = player.pos + player.speed;
+	Vec2 size = vec_2(player.size);
+	Rect playerTile{futurePosition, size};
+
+	
+	if (player.speed.x != 0)
+	{
+		auto moveX = [](Vec2 futurePosition, Rect playerTile)
+			{
+				int xi = futurePosition.x / 32;
+				int yi = futurePosition.y / 32;
+				auto coll = gameState.currentMap.collisionLayer;
+				auto width = gameState.currentMap.map_width;
+				//iRect destinationTile = {iVec2{xi,yi}, tileSize};
+				int index = yi * width + xi;
+				for (int i = -1; i <= 1; ++i)
+				{
+
+					if (coll.test(index + width * i))
+					{
+						iVec2 tilePos{ xi * 32,(yi + i) * 32 };
+						iRect tile = { tilePos,tileSize };
+						if (rectCollision(playerTile, tile))
+						{
+							//std::cout << "checking tile:" << tile.pos << "\n";
+							player.speed.x = 0;
+							std::cout << "collided with tile: " << tile.pos << " " << index << "\n";
+							return true;
+						}
+					}
+				}
+			};
+		moveX(futurePosition, playerTile);
+	}
+		if(player.speed.y != 0)
+		{
+			auto moveY = [](Vec2 futurePosition, Rect playerTile)
+				{
+					int xi = futurePosition.x / 32;
+					int yi = futurePosition.y / 32;
+					auto coll = gameState.currentMap.collisionLayer;
+					auto width = gameState.currentMap.map_width;
+					//iRect destinationTile = {iVec2{xi,yi}, tileSize};
+					int index = yi * width + xi;
+					for (int i = -1; i <= 1; ++i)
+					{
+
+						if (coll.test(index + width * i))
+						{
+							iVec2 tilePos{ (xi+i) * 32, yi * 32 };
+							iRect tile = { tilePos,tileSize };
+							if (rectCollision(playerTile, tile))
+							{
+								player.speed.y = 0;
+								std::cout << "collided with tile: " << tile.pos  << " " <<index << "\n";
+								return true;
+							}
+						}
+					}
+				};
+			moveY(futurePosition, playerTile);
+		}
+	
+
+
+	player.pos.x += player.speed.x;
+	player.pos.y += player.speed.y;
+
+
+	return false;
 }

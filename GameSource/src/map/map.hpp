@@ -2,7 +2,9 @@
 #include "../fileUtils.h"
 #include "../utils.h"
 #include <array>
-
+#include <bitset>
+#include <map>
+#include <algorithm>
 //void readMapFile();
 //void generateFile();
 //
@@ -19,10 +21,10 @@
 
 namespace MAP
 {
+	
 	enum MAP_ID
 	{
 		MAP_START,
-		MAP_DESERT,
 	};
 
 
@@ -33,10 +35,14 @@ namespace MAP
 		GLSL_uint map_width{};
 		GLSL_uint map_height{};
 		std::vector<uint32_t> tileLayer;
+		std::bitset<1000> collisionLayer;
+		std::vector<std::vector<bool>> gameGrid;
 		MAP_ID stageID;
 
 		static Map _initMap(MAP_ID id);
+		static std::bitset<1000> generateCollisionLayer(Map&);
 	};
+
 	Map Map::_initMap(MAP_ID id)
 	{
 		int x = 0;
@@ -89,11 +95,39 @@ namespace MAP
 		std::cout << "map loaded" << std::endl;
 		std::cout << x + y << std::endl;
 		ifs.close();
-
+		map.collisionLayer = Map::generateCollisionLayer(map);
 		return map;
 	}
 
 
+
+
+
+	std::bitset<1000> Map::generateCollisionLayer(Map& map)
+	{
+		std::vector<uint32_t> collidingTiles{ 1,2,3 };
+		std::bitset<1000> collisionLayer;
+		
+		size_t t = 0;
+
+		for (uint32_t& n : map.tileLayer)
+		{
+			if (std::find(collidingTiles.begin(),collidingTiles.end(),n) != collidingTiles.end())
+			{
+				collisionLayer.set(t);
+			}
+			++t;
+		}
+		for (int i = 0; i < map.tileLayer.size(); ++i)
+		{
+			
+		}
+
+
+		
+
+		return collisionLayer;
+	}
 
 
 

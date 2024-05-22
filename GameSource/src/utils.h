@@ -106,13 +106,11 @@ public:
 			for (int j = 0; j < 3; ++j)
 				this->data[i][j] = (i == j) ? 1.0f : 0.0f;
 	}
-
 	// Function to set the value at a specific row and column
 	void set(int row, int col, float value)
 	{
 		data[row][col] = value;
 	}
-
 	// Function to rotate the matrix around the Z-axis by a given angle (in radians)
 	void rotate(float angle)
 	{
@@ -246,6 +244,10 @@ std::ostream& operator<<(std::ostream& os, const iVec2& vec)
 Vec2 vec_2(iVec2 vec)
 {
 	return Vec2{ (float)vec.x, (float)vec.y };
+}
+iVec2 ivec_2(Vec2 vec)
+{
+	return iVec2{ (int)vec.x, (int)vec.y };
 }
 
 
@@ -398,6 +400,90 @@ class sprite2D
 };
 
 
+struct iRect
+{
+	iVec2 pos;
+	iVec2 size;
+
+	iRect(Vec2 a, Vec2 b)
+	{
+		pos.x = a.x;
+		pos.y = a.y;
+		size.x = b.x;
+		size.y = b.y;
+	}
+	iRect(Vec2 a, iVec2 b)
+	{
+		pos.x = a.x;
+		pos.y = a.y;
+		size.x = b.x;
+		size.y = b.y;
+	}
+	iRect(iVec2 a, iVec2 b)
+	{
+		pos.x = a.x;
+		pos.y = a.y;
+		size.x = b.x;
+		size.y = b.y;
+	}
+	iRect(iVec2 a, Vec2 b)
+	{
+		pos.x = a.x;
+		pos.y = a.y;
+		size.x = b.x;
+		size.y = b.y;
+	}
+};
+struct Rect
+{
+	Vec2 pos;
+	Vec2 size;
+
+};
+
+
+bool rectCollision(iRect a, iRect b)
+{
+	return
+		a.pos.x < b.pos.x + b.size.x &&
+		a.pos.x + a.size.x > b.pos.x &&
+		a.pos.y < b.pos.y + b.size.y &&
+		a.pos.y + a.size.y > b.pos.y;
+}
+bool rectCollision(Rect a, Rect b)
+{
+	return
+		a.pos.x < b.pos.x + b.size.x &&
+		a.pos.x + a.size.x > b.pos.x &&
+		a.pos.y < b.pos.y + b.size.y &&
+		a.pos.y + a.size.y > b.pos.y;
+}
+bool rectCollision(Rect a, iRect b)
+{
+	return
+		a.pos.x < b.pos.x + b.size.x &&
+		a.pos.x + a.size.x > b.pos.x &&
+		a.pos.y < b.pos.y + b.size.y &&
+		a.pos.y + a.size.y > b.pos.y;
+}
+
+
+bool pointInRect(Vec2 point, Rect rect)
+{
+	return (point.x >= rect.pos.x &&
+		point.x <= rect.pos.x + rect.size.x &&
+		point.y >= rect.pos.y &&
+		point.y <= rect.pos.y + rect.size.y);
+}
+bool pointInRect(Vec2 point, iRect rect)
+{
+	return (
+		point.x >= rect.pos.x &&
+		point.x <= rect.pos.x + rect.size.x &&
+		point.y >= rect.pos.y &&
+		point.y <= rect.pos.y + rect.size.y
+		);
+}
 
 //----------------------------------------------------UTILITY FUNCTIONS
 Vec2 normalize(const Vec2& vec)

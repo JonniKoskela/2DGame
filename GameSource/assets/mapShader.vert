@@ -18,7 +18,7 @@ void main()
 {
     uint currentTile = tileLayer[gl_InstanceID];
     uint idx = gl_InstanceID;
-    float posX = (gl_InstanceID % mapWidth) * 32.0;
+    float posX = ((gl_InstanceID % mapWidth) * 32.0);
     float posY = floor((gl_InstanceID / mapWidth)) * 32.0;   
     vec2 posVec = {posX,posY};
 

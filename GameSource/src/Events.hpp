@@ -51,7 +51,7 @@ static eventList testEventList;
 class LocationEventObserver
 {
 public:
-	bool active;
+	bool active = false;
 	eventList currentStageEvents;
 
 	LocationEventObserver(eventList& el)
