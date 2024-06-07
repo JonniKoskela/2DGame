@@ -404,7 +404,7 @@ struct iRect
 {
 	iVec2 pos;
 	iVec2 size;
-
+	iRect() = default;
 	iRect(Vec2 a, Vec2 b)
 	{
 		pos.x = a.x;
@@ -434,6 +434,7 @@ struct iRect
 		size.y = b.y;
 	}
 };
+
 struct Rect
 {
 	Vec2 pos;

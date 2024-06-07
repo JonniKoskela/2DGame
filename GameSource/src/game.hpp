@@ -79,8 +79,8 @@ void mainGameLoop()
 	lerpPlayerPosition();
 
 	updateEquipmentPosition();
-	Vec2 pv{ player.renderPos.x, player.renderPos.y};
-	drawSprite(SPRITE_FROG, pv);
+	
+	drawSprite(SPRITE_FROG, player.renderPos);
 	drawSprite(SPRITE_MOB_GOBLIN, gobo.position); 
 
 	//drawPlayerEquipment(player);
@@ -149,7 +149,7 @@ void updateMousePos()
 }
 
 
-void updateActionRenderState(double renderTimer)
+inline void updateActionRenderState(double renderTimer)
 {
 	for (ActionBarSlot& abs : actionBar.actions)
 	{
@@ -160,7 +160,7 @@ void updateActionRenderState(double renderTimer)
 	}
 }
 
-void lerpPlayerPosition()
+inline void lerpPlayerPosition()
 {
 	{
 		player.renderPos.x = player.pos.x + (player.speed.x * (renderTimer / DELTA));
@@ -168,7 +168,7 @@ void lerpPlayerPosition()
 	}
 }
 
-void updateEquipmentPosition()
+inline void updateEquipmentPosition()
 {
 	if (player.equipment.ContainsWeapon)
 	{
@@ -260,7 +260,7 @@ void updateKeyBindingState()
 	}
 }
 
-void checkObserverState()
+inline void checkObserverState()
 { 
 	if (player.LEObserver->active)
 	{
@@ -270,76 +270,151 @@ void checkObserverState()
 bool checkCollision()
 {
 	constexpr iVec2 tileSize{ 32,32 };
-	static Vec2 remainder;
-
 	Vec2 futurePosition = player.pos + player.speed;
-	Vec2 size = vec_2(player.size);
-	Rect playerTile{futurePosition, size};
+	iRect playerRect = getPlayerRect(player);
 
-	
+
 	if (player.speed.x != 0)
 	{
-		auto moveX = [](Vec2 futurePosition, Rect playerTile)
+		auto moveX = [](Vec2 futurePosition, iRect playerRect)
 			{
 				int xi = futurePosition.x / 32;
 				int yi = futurePosition.y / 32;
-				auto coll = gameState.currentMap.collisionLayer;
+				auto grid = gameState.currentMap.gameGrid;
 				auto width = gameState.currentMap.map_width;
-				//iRect destinationTile = {iVec2{xi,yi}, tileSize};
-				int index = yi * width + xi;
-				for (int i = -1; i <= 1; ++i)
-				{
+				iVec2 playerGridPos = {player.pos.x / GAME_TILESIZE, player.pos.y / GAME_TILESIZE };
 
-					if (coll.test(index + width * i))
+				for (int x = playerGridPos.x - 1; x <= playerGridPos.x + 1; ++x)
+				{
+					for (int y = playerGridPos.y - 1; y <= playerGridPos.y + 1; ++y)
 					{
-						iVec2 tilePos{ xi * 32,(yi + i) * 32 };
-						iRect tile = { tilePos,tileSize };
-						if (rectCollision(playerTile, tile))
+						if (!grid[x][y])
 						{
-							//std::cout << "checking tile:" << tile.pos << "\n";
+							continue;
+						}
+						iVec2 v = { x * 32,y * 32 };
+						iRect tileRect = { v,tileSize };
+						if (rectCollision(playerRect,tileRect))
+						{
+							std::cout << "\n playerRect :" << playerRect.pos << " collided with tile " << tileRect.pos << x << y << "\n";
+							player.pos.x -= sign(player.speed.x);
 							player.speed.x = 0;
-							std::cout << "collided with tile: " << tile.pos << " " << index << "\n";
-							return true;
+
+							return;
 						}
 					}
 				}
+				player.pos.x += player.speed.x;
 			};
-		moveX(futurePosition, playerTile);
+		moveX(futurePosition, playerRect);
 	}
-		if(player.speed.y != 0)
-		{
-			auto moveY = [](Vec2 futurePosition, Rect playerTile)
-				{
-					int xi = futurePosition.x / 32;
-					int yi = futurePosition.y / 32;
-					auto coll = gameState.currentMap.collisionLayer;
-					auto width = gameState.currentMap.map_width;
-					//iRect destinationTile = {iVec2{xi,yi}, tileSize};
-					int index = yi * width + xi;
-					for (int i = -1; i <= 1; ++i)
-					{
+	if (player.speed.y != 0)
+	{
+		auto moveY = [](Vec2 futurePosition, iRect playerRect)
+			{
+				int xi = futurePosition.x / 32;
+				int yi = futurePosition.y / 32;
+				auto grid = gameState.currentMap.gameGrid;
+				auto width = gameState.currentMap.map_width;
+				iVec2 playerGridPos = { player.pos.x / GAME_TILESIZE, player.pos.y / GAME_TILESIZE };
 
-						if (coll.test(index + width * i))
+				for (int x = playerGridPos.x - 1; x <= playerGridPos.x + 1; ++x)
+				{
+					for (int y = playerGridPos.y - 1; y <= playerGridPos.y + 1; ++y)
+					{
+						if (grid[x][y] == false)
 						{
-							iVec2 tilePos{ (xi+i) * 32, yi * 32 };
-							iRect tile = { tilePos,tileSize };
-							if (rectCollision(playerTile, tile))
-							{
-								player.speed.y = 0;
-								std::cout << "collided with tile: " << tile.pos  << " " <<index << "\n";
-								return true;
-							}
+							continue;
+						}
+						iVec2 v = { x * 32,y * 32 };
+						iRect tileRect = { v,tileSize };
+						if (rectCollision(playerRect, tileRect))
+						{
+							player.speed.y = 0;
+							player.pos.y-= sign(player.speed.y);
+							return;
 						}
 					}
-				};
-			moveY(futurePosition, playerTile);
-		}
-	
-
-
-	player.pos.x += player.speed.x;
-	player.pos.y += player.speed.y;
-
-
+				}
+				player.pos.y += player.speed.y;
+			};
+		moveY(futurePosition, playerRect);
+	}
 	return false;
 }
+//bool checkCollision()
+//{
+//	constexpr iVec2 tileSize{ 32,32 };
+//	static Vec2 remainder;
+//
+//	Vec2 futurePosition = player.pos + player.speed;
+//	Vec2 size = vec_2(player.size);
+//	Rect playerTile{futurePosition, size};
+//
+//	
+//	if (player.speed.x != 0)
+//	{
+//		auto moveX = [](Vec2 futurePosition, Rect playerTile)
+//			{
+//				int xi = futurePosition.x / 32;
+//				int yi = futurePosition.y / 32;
+//				auto coll = gameState.currentMap.collisionLayer;
+//				auto width = gameState.currentMap.map_width;
+//				//iRect destinationTile = {iVec2{xi,yi}, tileSize};
+//				int index = yi * width + xi;
+//				for (int i = -1; i <= 1; ++i)
+//				{
+//
+//					if (coll.test(index + width * i))
+//					{
+//						iVec2 tilePos{ xi * 32,(yi + i) * 32 };
+//						iRect tile = { tilePos,tileSize };
+//						if (rectCollision(playerTile, tile))
+//						{
+//							//std::cout << "checking tile:" << tile.pos << "\n";
+//							player.speed.x = 0;
+//							std::cout << "collided with tile: " << tile.pos << " " << index << "\n";
+//							return true;
+//						}
+//					}
+//				}
+//			};
+//		moveX(futurePosition, playerTile);
+//	}
+//		if(player.speed.y != 0)
+//		{
+//			auto moveY = [](Vec2 futurePosition, Rect playerTile)
+//				{
+//					int xi = futurePosition.x / 32;
+//					int yi = futurePosition.y / 32;
+//					auto coll = gameState.currentMap.collisionLayer;
+//					auto width = gameState.currentMap.map_width;
+//					//iRect destinationTile = {iVec2{xi,yi}, tileSize};
+//					int index = yi * width + xi;
+//					for (int i = -1; i <= 1; ++i)
+//					{
+//
+//						if (coll.test(index + width * i))
+//						{
+//							iVec2 tilePos{ (xi+i) * 32, yi * 32 };
+//							iRect tile = { tilePos,tileSize };
+//							if (rectCollision(playerTile, tile))
+//							{
+//								player.speed.y = 0;
+//								std::cout << "collided with tile: " << tile.pos  << " " <<index << "\n";
+//								return true;
+//							}
+//						}
+//					}
+//				};
+//			moveY(futurePosition, playerTile);
+//		}
+//	
+//
+//
+//	player.pos.x += player.speed.x;
+//	player.pos.y += player.speed.y;
+//
+//
+//	return false;
+//}

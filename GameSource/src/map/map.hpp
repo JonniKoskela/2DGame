@@ -1,10 +1,12 @@
 #pragma once
+
 #include "../fileUtils.h"
 #include "../utils.h"
 #include <array>
 #include <bitset>
 #include <map>
 #include <algorithm>
+#include "../game.h"
 //void readMapFile();
 //void generateFile();
 //
@@ -29,14 +31,17 @@ namespace MAP
 
 
 	std::string getMapFilePath(MAP_ID);
+
+
 	class Map
 	{
 	public:
 		GLSL_uint map_width{};
 		GLSL_uint map_height{};
+		bool gameGrid[80][80];
 		std::vector<uint32_t> tileLayer;
 		std::bitset<1000> collisionLayer;
-		std::vector<std::vector<bool>> gameGrid;
+
 		MAP_ID stageID;
 
 		static Map _initMap(MAP_ID id);
@@ -105,24 +110,26 @@ namespace MAP
 
 	std::bitset<1000> Map::generateCollisionLayer(Map& map)
 	{
-		std::vector<uint32_t> collidingTiles{ 1,2,3 };
+		std::vector<uint32_t> collidingTiles{ 1, };
 		std::bitset<1000> collisionLayer;
-		
 		size_t t = 0;
-
+		size_t i = 0;
+		size_t j = 0;
+		
 		for (uint32_t& n : map.tileLayer)
 		{
 			if (std::find(collidingTiles.begin(),collidingTiles.end(),n) != collidingTiles.end())
 			{
 				collisionLayer.set(t);
+				map.gameGrid[j][i] = true;
 			}
-			++t;
-		}
-		for (int i = 0; i < map.tileLayer.size(); ++i)
-		{
+			++j;
+			if (j >= map.map_width)
+			{
+				 j = 0; ++i;
+			}
 			
 		}
-
 
 		
 

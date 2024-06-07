@@ -16,7 +16,7 @@ static ActionBar actionBar{};
 
 
 static double deltaTime = 0.0;
-static double renderTimer{ 0 };
+static double renderTimer{ 0.0 };
 
 double getTime();
 void initGame();
@@ -27,8 +27,6 @@ void updateActionRenderState(double renderTimer);
 void lerpPlayerPosition();
 void checkActionRenderStatus(ActionBar&);
 //void startArcAttack();
-bool arcHitDetection(float AttackAngle);
-
 enum ACTIVE_GAMESTATE
 {
 	GAMESTATE_PLAYING,

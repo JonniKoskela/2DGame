@@ -182,7 +182,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\include;$(SolutionDir)Dependencies\glm\glm;$(SolutionDir)Dependencies\GLAD\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\include;$(SolutionDir)Dependencies\glm\glm;$(SolutionDir)Dependencies\GLAD\include;$(SolutionDir)Dependencies\IMGUI\backends;$(SolutionDir)Dependencies\IMGUI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <DisableSpecificWarnings>4996</DisableSpecificWarnings>
     </ClCompile>
@@ -240,6 +240,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Dependencies\GLAD\src\glad.c" />
+    <ClCompile Include="..\Dependencies\IMGUI\backends\imgui_impl_glfw.cpp" />
+    <ClCompile Include="..\Dependencies\IMGUI\backends\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="..\Dependencies\IMGUI\imgui.cpp" />
+    <ClCompile Include="..\Dependencies\IMGUI\imgui_demo.cpp" />
+    <ClCompile Include="..\Dependencies\IMGUI\imgui_draw.cpp" />
+    <ClCompile Include="..\Dependencies\IMGUI\imgui_tables.cpp" />
+    <ClCompile Include="..\Dependencies\IMGUI\imgui_widgets.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -267,6 +274,8 @@
     <ClInclude Include="src\camera.h" />
     <ClInclude Include="src\GLrenderer_attackQueue.hpp" />
     <ClInclude Include="src\GLRenderer_attackRenderData.h" />
+    <ClInclude Include="src\GUI\GUI.h" />
+    <ClInclude Include="src\GUI\GUI.hpp" />
     <ClInclude Include="src\itemInterface.h" />
     <ClInclude Include="src\map\map.hpp" />
     <ClInclude Include="src\mobs.h" />

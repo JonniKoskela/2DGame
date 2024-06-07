@@ -12,11 +12,16 @@
 #include "GLrenderer.hpp"
 #include "input.hpp"
 #include "Events.hpp"
+#include "GUI/GUI.hpp"
+
 //----cpp----
 
 
 float winWidth = 1280.0f;
 float winHeight = 720.0f;
+
+constexpr char glsl_version[] = "#version 430";
+
 
 //----------------
 
@@ -25,6 +30,7 @@ BumpAllocator bump{};
 
 int main(void)
 {
+
     bump = makeBumpAllocator(MB(20));
     if (!glfwInit())
         return -1;
@@ -58,10 +64,14 @@ int main(void)
 
     glInit(&bump);
 
+    CustomImGui myimgui;
+    myimgui.Init(window, glsl_version);
+
     while (!glfwWindowShouldClose(window))
     {
         mainGameLoop();
         openGLRender();
+
         glfwSwapBuffers(window);
         glfwPollEvents();
     }

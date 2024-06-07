@@ -8,7 +8,6 @@
 #include <array>
 #include "GLRenderer_attackRenderData.h"
 
-
 const char* TEXTURE_PATH = "assets/textureAtlas.png";
 const char* TILEMAP_ATLAS_PATH = "assets/tileMapAtlas.png";
 
@@ -24,12 +23,9 @@ GLuint orthoID{};
 GLuint screenSizeID{};
 GLuint transformSBO{};
 GLuint shaderProgram{};
-
 GLuint textureAtlas_01{};
 GLuint arcShaderTexture{};
-
 GLuint objectTypeID{};
-
 GLuint arcShader{};
 GLuint arcShaderProjection{};
 GLuint arcFadeDurationLocation{};
@@ -38,17 +34,14 @@ GLuint currentTimeLocation{};
 GLuint attackFlagLocation{};
 GLuint slamDurationLocation{};
 GLuint rotationMatrixLocation{};
-
 GLuint mapTextureFile{};
 GLuint mapDataSSBO{};
 GLuint mapShader{};
 GLuint mapHeightUniform{};
 GLuint mapWidthUniform{};
 GLuint mapProjectionLocation{};
-
 GLuint tileMapAtlasLocation{};
-
-GLint textureArray[5];
+GLint  textureArray[5];
 
 static bool renderSlamBool{ false };
 

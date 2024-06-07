@@ -47,7 +47,6 @@ class KeyMapping
 public:
 	std::vector<Key> keys{3};
 
-	KeyMapping()
-	{
-	}
+	KeyMapping() = default;
+
 };

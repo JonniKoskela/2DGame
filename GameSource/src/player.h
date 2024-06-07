@@ -38,6 +38,22 @@ public:
 };
 static Player player{};
 
+
+
+//______________________________________________
+iRect getPlayerRect(Player& player)
+{
+	iRect playerRect{};
+	playerRect.pos.x = player.pos.x - (player.size.x / 2),
+	playerRect.pos.y =	player.pos.y - (player.size.y / 2);
+
+	playerRect.size.x = player.size.x;
+	playerRect.size.y = player.size.y;
+
+	
+	return playerRect;
+};
+
 void weaponChanged()
 {
 	std::cout << "player weapon changed" << "\n";

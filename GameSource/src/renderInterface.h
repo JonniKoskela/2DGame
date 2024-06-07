@@ -7,8 +7,8 @@
 #include "GLRenderer_attackRenderData.h"
 #include "player.h"
 struct Transform {
-	Vec2 size{ 0 };
-	Vec2 pos{ 0 };
+	Vec2 size{ 0.0f };
+	Vec2 pos{ 0.0f };
 	iVec2 atlasOffset{ 0,0 };
 	iVec2 spriteSize{ 0,0 };
 };
@@ -49,7 +49,7 @@ void drawQuad(Transform transform)
 	renderData->transforms.emplace_back(transform);
 }
 
-void drawSprite(SpriteID spriteID, Vec2 pos)
+inline void drawSprite(SpriteID spriteID, Vec2 pos)
 {
 	Sprite sprite = getSprite(spriteID);
 
@@ -62,7 +62,7 @@ void drawSprite(SpriteID spriteID, Vec2 pos)
 	renderData->transforms.push_back(transform);
 }
 
-void drawSprite(SpriteID spriteID, iVec2 pos)
+inline void drawSprite(SpriteID spriteID, iVec2 pos)
 {
 	drawSprite(spriteID, vec_2(pos));
 }
