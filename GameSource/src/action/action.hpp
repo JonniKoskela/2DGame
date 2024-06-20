@@ -6,7 +6,6 @@
 #include "attackProperties.hpp"
 #include "actionDrawData.hpp"
 
-
 Action loadAction(ActionID id);
 void startAttack(int actionID);
 //void startArcAttack();
@@ -54,7 +53,7 @@ Action loadAction(ActionID id)
 {
 	Action a{};
 
-	a.drawData = loadDrawData(id);
+	a.drawData = loadAnimationData(id);
 	if(id >= 50)
 	{
 		a.attackProperties = loadAttackProperties(id);

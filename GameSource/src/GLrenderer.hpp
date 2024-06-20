@@ -162,7 +162,12 @@ void openGLRender()
 			camera.position.x + camera.dimensions.x / 2.0f,
 			camera.position.y + camera.dimensions.y / 2.0f,
 			camera.position.y - camera.dimensions.y / 2.0f);
-
+		//Matrix2f ts{};
+		//ts.data[0][0] = 0;
+		//ts.data[1][0] = 1;
+		//ts.data[0][1] = 1;
+		//ts.data[1][1] = 0;
+		//orthoProjection = orthoProjection * ts;
 	{
 
 		glUseProgram(shaderProgram);
@@ -252,8 +257,8 @@ bool compileShaders(BumpAllocator* bump)
 	error = glGetError();
 	shaderProgram = glCreateProgram();
 	int fileSize = 0;
-	char* vertShader = readFile(const_cast<char*>("assets/quad.vert"), &fileSize, bump);
-	char* fragShader = readFile(const_cast<char*>("assets/quad.frag"), &fileSize, bump);
+	const char* vertShader = readFile(const_cast<char*>("assets/quad.vert"), &fileSize, bump);
+	const char* fragShader = readFile(const_cast<char*>("assets/quad.frag"), &fileSize, bump);
 	error = glGetError();
 	if (!vertShader || !fragShader)
 	{
@@ -332,8 +337,8 @@ bool compileArcShaders(BumpAllocator* bump)
 	arcShader = glCreateProgram();
 
 	int fileSize = 0;
-	char* vertShader = readFile(const_cast<char*>("assets/arc.vert"), &fileSize, bump);
-	char* fragShader = readFile(const_cast<char*>("assets/arc.frag"), &fileSize, bump);
+	const char* vertShader = readFile(const_cast<char*>("assets/arc.vert"), &fileSize, bump);
+	const char* fragShader = readFile(const_cast<char*>("assets/arc.frag"), &fileSize, bump);
 
 	if (!vertShader || !fragShader)
 	{
@@ -413,8 +418,8 @@ bool compileMapShaders(BumpAllocator* bump)
 	mapShader = glCreateProgram();
 
 	int fileSize = 0;
-	char* vertShader = readFile(const_cast<char*>("assets/mapShader.vert"), &fileSize, bump);
-	char* fragShader = readFile(const_cast<char*>("assets/mapShader.frag"), &fileSize, bump);
+	const char* vertShader = readFile(const_cast<char*>("assets/mapShader.vert"), &fileSize, bump);
+	const char* fragShader = readFile(const_cast<char*>("assets/mapShader.frag"), &fileSize, bump);
 
 	if (!vertShader || !fragShader)
 	{

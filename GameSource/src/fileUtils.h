@@ -86,7 +86,7 @@ bool file_exists(char* filePath)
 }
 
 
-long getFileSize(char* filePath)
+long getFileSize(const char* filePath)
 {
 	assert(filePath && "no filepath");
 
@@ -105,7 +105,7 @@ long getFileSize(char* filePath)
 }
 
 
-char* readFile(char* filePath, int* fileSize, char* buffer)
+const char* readFile(const char* filePath, int* fileSize,const char* buffer)
 {
 	assert(filePath && "no filePath");
 	assert(fileSize && "no fileSize");
@@ -127,8 +127,8 @@ char* readFile(char* filePath, int* fileSize, char* buffer)
 	}
 
 
-	memset(buffer, 0, *fileSize);
-	fread(buffer, sizeof(char), *fileSize, file);
+	memset((void*)buffer, 0, *fileSize);
+	fread((void*)buffer, sizeof(char), *fileSize, file);
 
 	fclose(file);
 
@@ -136,9 +136,9 @@ char* readFile(char* filePath, int* fileSize, char* buffer)
 }
 
 
-char* readFile(char* filePath, int* fileSize, BumpAllocator* bumpAllocator)
+const char* readFile(char* filePath, int* fileSize, BumpAllocator* bumpAllocator)
 {
-	char* file = nullptr;
+	const char* file = nullptr;
 	long fileSize2 = getFileSize(filePath);
 
 	if (fileSize2)
@@ -167,10 +167,10 @@ void writeFile(char* filePath, char* buffer, int size)
 }
 
 
-bool copyFile(char* fileName, char* outputName, char* buffer)
+bool copyFile(const char* fileName,const char* outputName,const char* buffer)
 {
 	int fileSize = 0;
-	char* data = readFile(fileName, &fileSize, buffer);
+	const char* data = readFile(fileName, &fileSize, buffer);
 
 	auto outputFile = fopen(outputName, "wb");
 	if (!outputFile)
@@ -191,7 +191,7 @@ bool copyFile(char* fileName, char* outputName, char* buffer)
 }
 
 
-bool copyFile(char* fileName, char* outputName, BumpAllocator* bumpAllocator)
+bool copyFile(const char* fileName,const char* outputName, BumpAllocator* bumpAllocator)
 {
 	char* file = 0;
 	long fileSize = getFileSize(fileName);

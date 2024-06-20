@@ -11,4 +11,6 @@ public:
     virtual void Update();
     void Render();
     void Close();
+
+    bool toggleImgui = false;
 };

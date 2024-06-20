@@ -23,6 +23,7 @@ float winHeight = 720.0f;
 constexpr char glsl_version[] = "#version 430";
 
 
+
 //----------------
 
 GLFWwindow* window;
@@ -71,11 +72,12 @@ int main(void)
     {
         mainGameLoop();
         openGLRender();
-
+	  if (myimgui.toggleImgui) drawImgui(myimgui);
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
+    myimgui.Close();
     glfwDestroyWindow(window);
     glfwTerminate();
     return 0;

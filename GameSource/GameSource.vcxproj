@@ -255,7 +255,6 @@
     <ClInclude Include="src\action\actionDrawData.hpp" />
     <ClInclude Include="src\action\ACTION_ENUM.H" />
     <ClInclude Include="src\action\attackActionStructs.h" />
-    <ClInclude Include="src\action\attackProperties.h" />
     <ClInclude Include="src\action\attackProperties.hpp" />
     <ClInclude Include="src\action\attacks.hpp" />
     <ClInclude Include="src\action\action.h" />
@@ -269,14 +268,12 @@
     <ClInclude Include="src\equipment\WeaponStats.h" />
     <ClInclude Include="src\Events.hpp" />
     <ClInclude Include="src\game.h" />
-    <ClInclude Include="src\game_worldGrid.h" />
     <ClInclude Include="src\GLrenderer.h" />
     <ClInclude Include="src\camera.h" />
     <ClInclude Include="src\GLrenderer_attackQueue.hpp" />
     <ClInclude Include="src\GLRenderer_attackRenderData.h" />
     <ClInclude Include="src\GUI\GUI.h" />
     <ClInclude Include="src\GUI\GUI.hpp" />
-    <ClInclude Include="src\itemInterface.h" />
     <ClInclude Include="src\map\map.hpp" />
     <ClInclude Include="src\mobs.h" />
     <ClInclude Include="src\input.h" />

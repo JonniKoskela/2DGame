@@ -2,7 +2,7 @@
 #include "ACTION_ENUM.H"
 #include "attackTimer.h"
 #include "../GLRenderer_attackRenderData.h"
-#include "attackProperties.h"
+#include "attackProperties.hpp"
 #include "actionDrawData.h"
 class Action
 {
@@ -13,9 +13,9 @@ public:
 
 	int actionStaticType{ 0 };
 	
-	DrawData drawData;
+	AnimationData drawData;
 	ActionTimer actionTimer{};
-	AttackProperties* attackProperties = nullptr;
+	AttackProperties attackProperties;
 	RenderData4xVec2* currentVertices = nullptr;
 	Action() = default;
 	~Action()

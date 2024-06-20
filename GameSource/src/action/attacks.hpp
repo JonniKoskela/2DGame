@@ -219,8 +219,8 @@ RenderData4xVec2 generateMovingArcAttackAnim(Vec2 const& playerPos,float mAngle,
 	static std::array<Vec2, 4> endVertices;
 	if (!init)
 	{
-		float width = action.attackProperties->width;
-		float attackRange = action.attackProperties->range;
+		float width = action.attackProperties.width;
+		float attackRange = action.attackProperties.range;
 
 		startVertices = 
 		{

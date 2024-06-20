@@ -2,9 +2,9 @@
 #include "ACTION_ENUM.H"
 #include "../utils.h"
 
-struct DrawData
+struct AnimationData
 {
-	int frameCount{0};
+	int frameCount{ 0 };
 	iVec2 animation_atlasPosition{};
 	iVec2 animation_atlasSize{};
 };

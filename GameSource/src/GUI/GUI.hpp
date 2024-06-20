@@ -62,6 +62,8 @@
 		    ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
 
 
+		ImGui::Text("adada");
+
 
 
 		// window #1 "tilesets
@@ -69,3 +71,11 @@
 
     private:
     };
+
+
+void drawImgui(imguiBind& imgui)
+{
+    imgui.NewFrame();
+    imgui.Update();
+    imgui.Render();
+}

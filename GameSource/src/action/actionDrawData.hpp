@@ -2,9 +2,9 @@
 #include "actionDrawData.h"
 
 
-DrawData loadDrawData(ActionID id)
+AnimationData loadAnimationData(ActionID id)
 {
-	DrawData dd{};
+	AnimationData dd{};
 
 	switch (id)
 	{

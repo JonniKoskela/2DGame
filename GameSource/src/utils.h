@@ -286,6 +286,23 @@ struct Matrix4f
 		}
 		return result;
 	}
+	Matrix4f operator*(const Matrix2f& rhs) const
+	{
+	    Matrix4f result;
+
+	    for (int i = 0; i < 2; ++i)
+	    {
+		  for (int j = 0; j < 2; ++j)
+		  {
+			result.data[i][j] = data[i][0] * rhs.data[0][j] + data[i][1] * rhs.data[1][j];
+		  }
+	    }
+	    // Handle the rest of the identity dataatrix parts
+	    result.data[2][2] = data[2][2];
+	    result.data[3][3] = data[3][3];
+
+	    return result;
+	}
 	operator glm::mat4() const
 	{
 		glm::mat4 result;
@@ -560,7 +577,7 @@ void getFPS(float interval)
 
 //accepts std::string or any arithmetic type
 template<typename T>
-std::vector<T> filepath_vec(const char* filePath)
+std::vector<T> fileToVec(const char* filePath)
 {
 	std::ifstream ifs(filePath);
 	std::string str;
@@ -577,7 +594,7 @@ std::vector<T> filepath_vec(const char* filePath)
 }
 
 template<>
-std::vector<std::string> filepath_vec<std::string>(const char* filePath)
+std::vector<std::string> fileToVec<std::string>(const char* filePath)
 {
 	std::ifstream ifs(filePath);
 	std::string str;
@@ -591,10 +608,10 @@ std::vector<std::string> filepath_vec<std::string>(const char* filePath)
 }
 
 template<typename T>
-std::vector<T> filepath_vec(std::string& filePath)
+std::vector<T> fileToVec(std::string& filePath)
 {
 	char* p = &filePath;
-	return filepath_vec<T>(filePath);
+	return fileToVec<T>(filePath);
 }
 
 //float getMilliseconds()
