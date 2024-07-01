@@ -34,7 +34,7 @@ struct RenderData
 static RenderData* renderData = new RenderData{};
 
 
-void drawQuad(Vec2 pos, Vec2 size)
+inline void drawQuad(Vec2 pos, Vec2 size)
 {
 	Transform transform = {};
 	transform.pos = pos - size / 2.0f;
@@ -44,7 +44,7 @@ void drawQuad(Vec2 pos, Vec2 size)
 
 	renderData->transforms.emplace_back(transform);
 }
-void drawQuad(Transform transform)
+inline void drawQuad(Transform transform)
 {
 	renderData->transforms.emplace_back(transform);
 }
@@ -67,11 +67,46 @@ inline void drawSprite(SpriteID spriteID, iVec2 pos)
 	drawSprite(spriteID, vec_2(pos));
 }
 
-void drawPlayerEquipment(const Player& player)
+inline void drawPlayerEquipment(const Player& player)
 {
 	RenderData4xVec2 weaponDraw = player.weaponRenderData.renderData;
 	weaponDraw.attackFlag = 1;
 	attackTransforms.push_back(weaponDraw);
+}
+
+void drawMob(MOB_ID mobid, Mob& mob)
+{
+    Transform transform{};
+
+    Sprite mobSprite = getMobSprite(mobid);
+
+    transform.atlasOffset = mobSprite.atlasOffset;
+    transform.spriteSize = mobSprite.size;
+    transform.size = mob.size;
+    transform.pos = mob.position;
+
+    renderData->transforms.push_back(transform);
+}
+
+void drawDebugQuad(Vec2 pos,int size)
+{
+    Transform transform{};
+
+
+    transform.atlasOffset = { 32,32 };
+    transform.spriteSize = {4,4};
+    transform.size = { (float)size,(float)size };
+    transform.pos = pos;
+
+    renderData->transforms.push_back(transform);
+}
+
+void drawMobs()
+{
+    for (Mob& mob : gameState.mobs.mobList)
+    {
+	  drawMob(mob.id, mob);
+    }
 }
 
 

@@ -19,7 +19,7 @@
 
 float winWidth = 1280.0f;
 float winHeight = 720.0f;
-
+CustomImGui myimgui;
 constexpr char glsl_version[] = "#version 430";
 
 
@@ -65,8 +65,10 @@ int main(void)
 
     glInit(&bump);
 
-    CustomImGui myimgui;
+
     myimgui.Init(window, glsl_version);
+
+    myimgui.toggleImgui = true;
 
     while (!glfwWindowShouldClose(window))
     {

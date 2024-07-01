@@ -1,7 +1,10 @@
 #pragma once
 #include "equipment/equipmentSet.h"
+#include "targeting.h"
 
 class LocationEventObserver;
+class TabTarget;
+
 enum WeaponDisplacement
 {
 	WEAPON_DISPLACEMENT_LEFT,
@@ -26,15 +29,20 @@ public:
 class Player
 {
 public:
+	WeaponRenderData weaponRenderData{};
+	TabTarget target;
+	Mob* currentTarget;
+
+	EquipmentSet equipment{};
+
+	const iVec2 size{31,31};
 	Vec2 pos{};
 	Vec2 renderPos{};
 	Vec2 speed{};
-	const iVec2 size{31,31};
-	EquipmentSet equipment{};
-	WeaponRenderData weaponRenderData{};
 	bool attacking{ false };
 	bool moving{ false };
 	std::unique_ptr<LocationEventObserver> LEObserver;
+
 };
 static Player player{};
 

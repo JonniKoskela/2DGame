@@ -16,7 +16,6 @@ extern float winWidth;
 
 void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-
 }
 
 void updateKeyState()
@@ -70,4 +69,5 @@ void initializeInputs() {
 	gameState.keyMappings[ACTIONBAR_1].keys[0] = Key(GLFW_KEY_1);
 	gameState.keyMappings[ACTIONBAR_2].keys[0] = Key(GLFW_KEY_2);
 	gameState.keyMappings[ACTIONBAR_3].keys[0] = Key(GLFW_KEY_3);
+	gameState.keyMappings[TAB_TARGET].keys[0] = Key(GLFW_KEY_TAB);
 }

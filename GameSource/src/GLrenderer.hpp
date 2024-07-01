@@ -240,6 +240,7 @@ void openGLRender()
 			}
 		}
 	}
+	
 	error = glGetError();
 	if(error)
 	{

@@ -44,7 +44,22 @@ Sprite getSprite(SpriteID spriteID)
 	return sprite;
 }
 
+Sprite getMobSprite(MOB_ID spriteID)
+{
+    Sprite sprite{};
 
+    switch (spriteID)
+    {
+    case MOB_GOBLIN:
+    {
+	  sprite.atlasOffset = { 19,32 };
+	  sprite.size = { 18,35 };
+	  break;
+    }
+
+    }
+    return sprite;
+}
 
  
 

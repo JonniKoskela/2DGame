@@ -6,7 +6,7 @@
 #include <chrono>
 #include <fstream>
 #include <sstream>
-
+#include <random>
 
 constexpr long double MPI = 3.14159265358979323851;
 
@@ -213,6 +213,8 @@ struct Vec2
 		return result;
 	}
 };
+
+
 std::ostream& operator<<(std::ostream& os, const Vec2& vec)
 {
 	os << "x: " << vec.x << " " << " y: " << vec.y << "\n";
@@ -257,10 +259,15 @@ Vec2 transform_rotate(Vec2 vec, float angle)
 	return rotated;
 }
 
-//Vec2 transform_translate(Vec2& vec, int x, int y)
-//{
-//
-//}
+
+Vec2 randomVec2f(Vec2 numberRange)
+{
+    std::random_device rd;
+    std::mt19937 mt(rd());
+    std::uniform_real_distribution<float> dist(numberRange.x,numberRange.y);
+
+    return Vec2(dist(mt),dist(mt));
+}
 
 
 
@@ -613,6 +620,55 @@ std::vector<T> fileToVec(std::string& filePath)
 	char* p = &filePath;
 	return fileToVec<T>(filePath);
 }
+
+class ElapseTimer
+{
+public:
+    ElapseTimer(double intervalMs)
+    {
+	  start = std::chrono::high_resolution_clock::now();
+	  interval = intervalMs;
+    }
+
+    void reset()
+    {
+	  start = std::chrono::high_resolution_clock::now();
+    }
+
+    // Get the elapsed time in milliseconds
+    bool elapsed()
+    {
+	  auto now = std::chrono::high_resolution_clock::now();
+	  auto duration = std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(now - start);
+
+	  if (duration.count() >= interval)
+	  {
+		start = std::chrono::high_resolution_clock::now();
+		return true;
+	  }
+	  else
+	  {
+		return false;
+	  }
+    }
+
+private:
+    std::chrono::time_point<std::chrono::high_resolution_clock> start;
+    double interval;
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //float getMilliseconds()
 //{

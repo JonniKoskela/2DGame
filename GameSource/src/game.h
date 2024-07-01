@@ -41,6 +41,8 @@ struct GameState
 	KeyMapping keyMappings[GAME_INPUT_COUNT];
 	MAP::Map currentMap{};
 	ACTIVE_GAMESTATE activeState = GAMESTATE_PLAYING;
+
+	MobState mobs;
 };
 
 static GameState gameState{};

@@ -55,20 +55,30 @@
     public:
 	  virtual void Update() override
 	  {
+		{
+
+		    ImGuiWindowFlags tileSetsWindowFlags =
+			  ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
+		    ImGuiWindowFlags mapEditorWindowFlags =
+			  ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
+		}
+
+		int i = 0;
+		if(player.currentTarget)i = float(player.currentTarget->position.x);
 		
-		ImGuiWindowFlags tileSetsWindowFlags =
-		    ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
-		ImGuiWindowFlags mapEditorWindowFlags =
-		    ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
+		std::string ptrStr = std::to_string(i);
+		ImGui::Text(ptrStr.c_str());
 
+		std::string mobCount = "mobCount ";
+		mobCount.append(std::to_string(gameState.mobs.mobList.size()));
 
-		ImGui::Text("adada");
+		ImGui::Text(mobCount.c_str());
 
+		std::string dtStr = std::to_string(deltaTime);
 
-
-		// window #1 "tilesets
+		ImGui::Text(dtStr.c_str());
 	  }
-
+	  std::vector<std::function<void()>> widgetDrawList;
     private:
     };
 

@@ -1,13 +1,14 @@
 #pragma once
+#include "game.h"
+#include "targeting.hpp"
 #include "assets.h"
-#include "mobs.h"
 #include "renderInterface.h"
 #include "input.hpp"
 #include <chrono>
 #include "camera.h"
 #include "action/action.hpp"
 #include "action/attackActionStructs.h"
-#include "game.h"
+
 #include "action/attackTimer.hpp"
 #include "GLrenderer_attackQueue.hpp"
 #include "map/map.hpp"
@@ -30,9 +31,12 @@ void simulate()
 {
 	checkObserverState();
 	updatePlayerMovement();
-
 	updateKeyBindingState();
 
+	if (pollAction(TAB_TARGET, KEY_DOWN))
+	{
+	    player.target.tabTarget();
+	}
 
 
 	//update cooldowns && process Actions
@@ -81,7 +85,11 @@ void mainGameLoop()
 	updateEquipmentPosition();
 	
 	drawSprite(SPRITE_FROG, player.renderPos);
-	drawSprite(SPRITE_MOB_GOBLIN, gobo.position); 
+	drawMobs();
+
+	if(player.currentTarget){
+	    drawDebugQuad(player.currentTarget->position, 6);
+	}
 
 	//drawPlayerEquipment(player);
 	renderData->gameCamera.position = player.renderPos;
@@ -96,8 +104,12 @@ void initGame()
 	player.pos = {50,50};
 	renderData->gameCamera.dimensions = { 640.0f,360.0f };
 	renderData->gameCamera.position = { 0.0f, 0.0f };
-	gobo = createMob(MOB_GOBLIN);
-	gobo.position = { 100.0f, 100.0f };
+	Vec2 range = { 50.0f,200.0f };
+	gameState.mobs.mobList.push_back(createMob(MOB_GOBLIN, randomVec2f(range)));
+	gameState.mobs.mobList.push_back(createMob(MOB_GOBLIN, randomVec2f(range)));
+	gameState.mobs.mobList.push_back(createMob(MOB_GOBLIN, randomVec2f(range)));
+	gameState.mobs.mobList.push_back(createMob(MOB_GOBLIN, randomVec2f(range)));
+	gameState.mobs.mobList.push_back(createMob(MOB_GOBLIN, randomVec2f(range)));
 	actionBar.actions.reserve(5);
 	actionBar.actions[0].bindActionBarSlot(loadAction(ARC_ATTACK));
 	actionBar.actions[0].active = true;
@@ -117,7 +129,7 @@ void initGame()
 	player.LEObserver->active = true;
 }
 
-double getTime() 
+inline double getTime() 
 {
 	static auto previousTime = Clock::now();
 	static auto currentTime = Clock::now();
@@ -127,7 +139,7 @@ double getTime()
 	previousTime = currentTime;
 	return dt.count();
 }
-double getRenderTime()
+inline double getRenderTime()
 {
 	static auto previousRenderTime = Clock::now();
 	static auto currentRenderTime = Clock::now();
@@ -138,7 +150,7 @@ double getRenderTime()
 	return dt.count();
 }
 
-void updateMousePos()
+inline void updateMousePos()
 {
 	double xPos{}, yPos{};
 	glfwGetCursorPos(window, &xPos, &yPos);
@@ -239,27 +251,6 @@ void updatePlayerMovement()
 	checkCollision();
 }
 
-void updateKeyBindingState()
-{
-	{
-		if (pollAction(ACTIONBAR_1, KEY_DOWN) == true && actionBar.actions[0].onCooldown == false)
-		{
-			actionBar.actions[0].onCooldown = true;
-			player.weaponRenderData.playerWeaponOnLeft = !player.weaponRenderData.playerWeaponOnLeft;
-		}
-		if (pollAction(ACTIONBAR_2, KEY_DOWN) == true && actionBar.actions[1].onCooldown == false)
-		{
-			actionBar.actions[1].onCooldown = true;
-			player.weaponRenderData.playerWeaponOnLeft = !player.weaponRenderData.playerWeaponOnLeft;
-		}
-		if (pollAction(ACTIONBAR_3, KEY_DOWN) == true && actionBar.actions[2].onCooldown == false)
-		{
-			actionBar.actions[2].onCooldown = true;
-			player.weaponRenderData.playerWeaponOnLeft = !player.weaponRenderData.playerWeaponOnLeft;
-		}
-	}
-}
-
 inline void checkObserverState()
 { 
 	if (player.LEObserver->active)
@@ -342,6 +333,32 @@ bool checkCollision()
 	}
 	return false;
 }
+
+
+
+
+
+void updateKeyBindingState()
+{
+    {
+	  if (pollAction(ACTIONBAR_1, KEY_DOWN) == true && actionBar.actions[0].onCooldown == false)
+	  {
+		actionBar.actions[0].onCooldown = true;
+		player.weaponRenderData.playerWeaponOnLeft = !player.weaponRenderData.playerWeaponOnLeft;
+	  }
+	  if (pollAction(ACTIONBAR_2, KEY_DOWN) == true && actionBar.actions[1].onCooldown == false)
+	  {
+		actionBar.actions[1].onCooldown = true;
+		player.weaponRenderData.playerWeaponOnLeft = !player.weaponRenderData.playerWeaponOnLeft;
+	  }
+	  if (pollAction(ACTIONBAR_3, KEY_DOWN) == true && actionBar.actions[2].onCooldown == false)
+	  {
+		actionBar.actions[2].onCooldown = true;
+		player.weaponRenderData.playerWeaponOnLeft = !player.weaponRenderData.playerWeaponOnLeft;
+	  }
+    }
+}
+
 //bool checkCollision()
 //{
 //	constexpr iVec2 tileSize{ 32,32 };

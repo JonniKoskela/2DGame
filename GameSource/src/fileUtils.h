@@ -44,7 +44,7 @@ BumpAllocator makeBumpAllocator(size_t size)
 }
 
 
-char* bumpAlloc(BumpAllocator* allocator, size_t size)
+inline char* bumpAlloc(BumpAllocator* allocator, size_t size)
 {
 	char* result = nullptr;
 
@@ -63,7 +63,7 @@ char* bumpAlloc(BumpAllocator* allocator, size_t size)
 }
 
 
-long long getTimeStamp(const char* file)
+inline long long getTimeStamp(const char* file)
 {
 	struct stat fileStat = {};
 	stat(file, &fileStat);
@@ -71,7 +71,7 @@ long long getTimeStamp(const char* file)
 }
 
 
-bool file_exists(char* filePath)
+inline bool file_exists(const char* filePath)
 {
 	assert(filePath && "no filepath");
 
@@ -86,7 +86,7 @@ bool file_exists(char* filePath)
 }
 
 
-long getFileSize(const char* filePath)
+inline long getFileSize(const char* filePath)
 {
 	assert(filePath && "no filepath");
 
@@ -152,7 +152,7 @@ const char* readFile(char* filePath, int* fileSize, BumpAllocator* bumpAllocator
 }
 
 
-void writeFile(char* filePath, char* buffer, int size)
+inline void writeFile(char* filePath, char* buffer, int size)
 {
 	assert(filePath && "no filepath");
 
@@ -167,7 +167,7 @@ void writeFile(char* filePath, char* buffer, int size)
 }
 
 
-bool copyFile(const char* fileName,const char* outputName,const char* buffer)
+inline bool copyFile(const char* fileName,const char* outputName,const char* buffer)
 {
 	int fileSize = 0;
 	const char* data = readFile(fileName, &fileSize, buffer);
@@ -191,7 +191,7 @@ bool copyFile(const char* fileName,const char* outputName,const char* buffer)
 }
 
 
-bool copyFile(const char* fileName,const char* outputName, BumpAllocator* bumpAllocator)
+inline bool copyFile(const char* fileName,const char* outputName, BumpAllocator* bumpAllocator)
 {
 	char* file = 0;
 	long fileSize = getFileSize(fileName);
@@ -207,12 +207,12 @@ bool copyFile(const char* fileName,const char* outputName, BumpAllocator* bumpAl
 
 
 //MATHFUNCTIONS____________________________________________________________________
-int sign(int x)
+inline int sign(int x)
 {
 	return (x >= 0) ? 1 : -1;
 }
 
-float sign(float x)
+inline float sign(float x)
 {
 	return (x >= 0) ? 1 : -1;
 }

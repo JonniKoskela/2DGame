@@ -21,6 +21,12 @@ struct LocationEventData
 	std::function<void()> eventFn;
 	bool detachObserver = false;
 	LocationEventData() = default;
+	LocationEventData(EventBorders bor, std::function<void()> fn)
+	{
+	    borders = bor;
+	    eventFn = fn;
+	    detachObserver = false;
+	}
 };
 void triggerEvent(LocationEventData&);
 class eventList
